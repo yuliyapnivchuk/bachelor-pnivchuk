@@ -1,6 +1,6 @@
 package com.itstep.controller;
 
-import com.itstep.AzureDocIntelligenceService;
+import com.itstep.service.AzureDocIntelligenceService;
 import com.itstep.dto.ExpenseDto;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;

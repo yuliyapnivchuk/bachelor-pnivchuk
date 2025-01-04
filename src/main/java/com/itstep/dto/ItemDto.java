@@ -13,7 +13,7 @@ public class ItemDto {
     private Double price;
     private Double quantity;
     private Double totalPrice;
-    private UserDto assignedTo;
+    private String assignedTo;
 
     public static ItemDto createItem() {
         return new ItemDto();

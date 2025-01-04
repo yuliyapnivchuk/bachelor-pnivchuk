@@ -1,4 +1,4 @@
-package com.itstep;
+package com.itstep.service;
 
 import com.azure.ai.documentintelligence.DocumentIntelligenceClient;
 import com.azure.ai.documentintelligence.models.*;

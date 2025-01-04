@@ -1,0 +1,64 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(20) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS event (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS expense (
+    id SERIAL PRIMARY KEY,
+    event_id INT NOT NULL,
+    payer VARCHAR(100),
+    created_by VARCHAR(100),
+    summary VARCHAR(150),
+    total_amount NUMERIC,
+    subtotal_amount NUMERIC,
+    currency VARCHAR(10),
+    split_type VARCHAR(20),
+    transaction_date DATE,
+    transaction_time TIME,
+    category VARCHAR(100),
+    status VARCHAR(20),
+    FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
+    FOREIGN KEY (payer) REFERENCES users(name) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(name) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS item (
+    id SERIAL PRIMARY KEY,
+    expense_id INT,
+    description VARCHAR(300),
+    price NUMERIC,
+    quantity INT,
+    total_price NUMERIC,
+    assigned_to VARCHAR(100),
+    FOREIGN KEY (assigned_to) REFERENCES users(name) ON DELETE CASCADE,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS image (
+    id SERIAL PRIMARY KEY,
+    image BYTEA,
+    expense_id INT NOT NULL,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS audio (
+    id SERIAL PRIMARY KEY,
+    audio BYTEA,
+    audio_transcript TEXT,
+    expense_id INT NOT NULL,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS expense_divide_between (
+    user_id INT NOT NULL,
+    expense_id INT NOT NULL,
+    PRIMARY KEY (user_id, expense_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+);
