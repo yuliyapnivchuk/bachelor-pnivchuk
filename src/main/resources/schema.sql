@@ -54,18 +54,20 @@ CREATE TABLE IF NOT EXISTS audio (
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS expense_divide_between (
+CREATE TABLE IF NOT EXISTS expense_share (
+    id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     expense_id INT NOT NULL,
-    PRIMARY KEY (user_id, expense_id),
+    value NUMERIC,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS item_divide_between (
+CREATE TABLE IF NOT EXISTS item_share (
+    id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     item_id INT NOT NULL,
-    PRIMARY KEY (user_id, item_id),
+    value NUMERIC,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
 );

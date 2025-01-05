@@ -13,30 +13,28 @@ import org.mapstruct.Named;
 
 import static com.itstep.exception.ConstantsUtility.EVENT_WITH_SUCH_ID_NOT_FOUND;
 
-@Mapper(componentModel = "spring", uses = ItemMapper.class)
+@Mapper(componentModel = "spring", uses = {ItemMapper.class, SplitExpenseMapper.class, UserMapper.class})
 public interface ExpenseMapper {
-    @Mapping(source = "divideBetween", target = "divideBetween", qualifiedByName = "mapUserNameListToUserEntityList")
     @Mapping(source = "payedBy", target = "payer", qualifiedByName = "mapUserNameToUserEntity")
     @Mapping(source = "createdBy", target = "createdBy", qualifiedByName = "mapUserNameToUserEntity")
     @Mapping(source = "eventId", target = "event", qualifiedByName = "mapEventIdToEventEntity")
-    Expense mapExpenseDtoToExpenseEntity(ExpenseDto expenseDto, @Context EventRepository eventRepository,
-                                         @Context UserRepository userRepository);
+    Expense toEntity(ExpenseDto expenseDto, @Context EventRepository eventRepository,
+                     @Context UserRepository userRepository);
 
 
     @Named("mapEventIdToEventEntity")
-    default Event mapEventIdToEventEntity(Integer eventId, @Context EventRepository eventRepository) {
+    default Event toEntity(Integer eventId, @Context EventRepository eventRepository) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFound(EVENT_WITH_SUCH_ID_NOT_FOUND + eventId));
     }
 
-    @Mapping(source = "divideBetween", target = "divideBetween", qualifiedByName = "mapUserListToUserNameList")
     @Mapping(source = "createdBy", target = "createdBy", qualifiedByName = "mapUserEntityToUserName")
     @Mapping(source = "payer", target = "payedBy", qualifiedByName = "mapUserEntityToUserName")
     @Mapping(source = "event", target = "eventId", qualifiedByName = "mapEventEntityToEventDto")
-    ExpenseDto mapExpenseEntityToExpenseDto(Expense expense);
+    ExpenseDto toDto(Expense expense);
 
     @Named("mapEventEntityToEventDto")
-    default Integer mapEventEntityToEventDto(Event event) {
+    default Integer toDto(Event event) {
         return event.getId();
     }
 }

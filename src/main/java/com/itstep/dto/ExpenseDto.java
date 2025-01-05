@@ -15,13 +15,13 @@ public class ExpenseDto {
     private Integer id;
     private Integer eventId;
     private String payedBy;
-    private List<String> divideBetween;
     private String summary;
     private List<ItemDto> items = new ArrayList<>();
     private Double totalAmount;
     private Double subtotalAmount;
     private String currency;
     private String splitType;
+    private List<SplitExpenseDto> splitDetails;
     private LocalDate transactionDate;
     private String transactionTime;
     private String category;

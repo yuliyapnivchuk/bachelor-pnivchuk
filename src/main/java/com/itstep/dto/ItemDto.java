@@ -16,7 +16,7 @@ public class ItemDto {
     private Double quantity;
     private Double totalPrice;
     private String splitType;
-    private List<String> divideBetween;
+    private List<SplitItemDto> splitDetails;
 
     public static ItemDto createItem() {
         return new ItemDto();

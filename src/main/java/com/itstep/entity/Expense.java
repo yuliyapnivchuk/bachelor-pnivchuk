@@ -48,6 +48,9 @@ public class Expense {
     @Column(name = "split_type")
     private String splitType;
 
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
+    private List<SplitExpense> splitDetails;
+
     @Column(name = "transaction_date")
     private LocalDate transactionDate;
 
@@ -59,14 +62,6 @@ public class Expense {
 
     @Column(name = "status")
     private String status;
-
-    @ManyToMany
-    @JoinTable(
-            name = "expense_divide_between",
-            joinColumns = @JoinColumn(name = "expense_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> divideBetween;
 
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();

@@ -37,11 +37,6 @@ public class Item {
     @Column(name = "split_type")
     private String splitType;
 
-    @ManyToMany
-    @JoinTable(
-            name = "item_divide_between",
-            joinColumns = @JoinColumn(name = "item_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> divideBetween;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<SplitItem> splitDetails;
 }
