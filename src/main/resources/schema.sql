@@ -35,8 +35,7 @@ CREATE TABLE IF NOT EXISTS item (
     price NUMERIC,
     quantity INT,
     total_price NUMERIC,
-    assigned_to VARCHAR(100),
-    FOREIGN KEY (assigned_to) REFERENCES users(name) ON DELETE CASCADE,
+    split_type VARCHAR(20),
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );
 
@@ -61,4 +60,12 @@ CREATE TABLE IF NOT EXISTS expense_divide_between (
     PRIMARY KEY (user_id, expense_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS item_divide_between (
+    user_id INT NOT NULL,
+    item_id INT NOT NULL,
+    PRIMARY KEY (user_id, item_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
 );

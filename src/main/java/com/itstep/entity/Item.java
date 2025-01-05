@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "item")
 @NoArgsConstructor
@@ -32,7 +34,14 @@ public class Item {
     @Column(name = "total_price")
     private Double totalPrice;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to", referencedColumnName = "name")
-    private User assignedTo;
+    @Column(name = "split_type")
+    private String splitType;
+
+    @ManyToMany
+    @JoinTable(
+            name = "item_divide_between",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> divideBetween;
 }

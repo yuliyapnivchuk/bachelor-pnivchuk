@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -13,7 +15,8 @@ public class ItemDto {
     private Double price;
     private Double quantity;
     private Double totalPrice;
-    private String assignedTo;
+    private String splitType;
+    private List<String> divideBetween;
 
     public static ItemDto createItem() {
         return new ItemDto();

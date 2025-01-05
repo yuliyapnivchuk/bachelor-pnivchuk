@@ -19,8 +19,11 @@ import static com.itstep.exception.ConstantsUtility.USER_WITH_SUCH_NAME_NOT_FOUN
 public interface ItemMapper {
 
     @Mapping(target = "expense", ignore = true)
-    @Mapping(source = "assignedTo", target = "assignedTo", qualifiedByName = "mapUserNameToUserEntity")
+    @Mapping(source = "divideBetween", target = "divideBetween", qualifiedByName = "mapUserNameListToUserEntityList")
     Item mapItemDtoToItemEntityWithoutExpense(ItemDto itemDto, @Context UserRepository userRepository);
+
+    @Mapping(source = "divideBetween", target = "divideBetween", qualifiedByName = "mapUserListToUserNameList")
+    ItemDto mapItemEntityToItemDto(Item item);
 
     @Named("mapItemDtoListToItemEntityList")
     default List<Item> mapItemDtoListToItemEntityList(List<ItemDto> itemDtoList, @Context Expense expense, @Context UserRepository userRepository) {
@@ -46,11 +49,35 @@ public interface ItemMapper {
                 .orElseThrow(() -> new UserNotFound(USER_WITH_SUCH_NAME_NOT_FOUND + userName));
     }
 
-    @Mapping(source = "assignedTo", target = "assignedTo", qualifiedByName = "mapUserEntityToUserName")
-    ItemDto mapItemEntityToItemDto(Item item);
-
     @Named("mapUserEntityToUserName")
     default String mapUserEntityToUserName(User user) {
         return (user == null) ? null : user.getName();
+    }
+
+    @Named("mapUserNameListToUserEntityList")
+    default List<User> mapDivideBetweenToUserEtityList(List<String> divideBetweenList,
+                                                       @Context UserRepository userRepository) {
+        if (divideBetweenList == null) {
+            return null;
+        }
+
+        return divideBetweenList
+                .stream()
+                .map(userName -> userRepository.findByName(userName)
+                        .orElseThrow(() -> new UserNotFound(USER_WITH_SUCH_NAME_NOT_FOUND + userName)))
+                .toList();
+    }
+
+    @Named("mapUserListToUserNameList")
+    default List<String> mapUserListToUserNameList(List<User> users) {
+
+        if (users == null) {
+            return null;
+        }
+
+        return users
+                .stream()
+                .map(User::getName)
+                .toList();
     }
 }
