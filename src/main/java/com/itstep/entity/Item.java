@@ -3,6 +3,7 @@ package com.itstep.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -38,5 +39,6 @@ public class Item {
     private String splitType;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
     private List<SplitItem> splitDetails;
 }

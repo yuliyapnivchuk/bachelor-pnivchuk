@@ -3,6 +3,7 @@ package com.itstep.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -49,6 +50,7 @@ public class Expense {
     private String splitType;
 
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
     private List<SplitExpense> splitDetails;
 
     @Column(name = "transaction_date")
@@ -64,5 +66,6 @@ public class Expense {
     private String status;
 
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
     private List<Item> items = new ArrayList<>();
 }
