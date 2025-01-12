@@ -16,7 +16,13 @@ public class BalanceController {
 
     @GetMapping("/userIsOwed")
     @SneakyThrows
-    public Map<String, Map<String, Double>> createExpense(@RequestParam String user) {
+    public Map<String, Map<String, Double>> calculateWhatUserIsOwed(@RequestParam String user) {
         return balanceService.calculateWhatUserIsOwed(user);
+    }
+
+    @GetMapping("/userOwes")
+    @SneakyThrows
+    public Map<String, Map<String, Double>> calculateWhatUserOwes(@RequestParam String user) {
+        return balanceService.calculateWhatUserOwes(user);
     }
 }
