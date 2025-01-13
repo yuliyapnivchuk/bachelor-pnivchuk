@@ -1,5 +1,6 @@
 package com.itstep.controller;
 
+import com.itstep.dto.BalanceDto;
 import com.itstep.service.BalanceService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,15 +15,9 @@ public class BalanceController {
 
     private BalanceService balanceService;
 
-    @GetMapping("/userIsOwed")
+    @GetMapping
     @SneakyThrows
-    public Map<String, Map<String, Double>> calculateWhatUserIsOwed(@RequestParam String user) {
-        return balanceService.calculateWhatUserIsOwed(user);
-    }
-
-    @GetMapping("/userOwes")
-    @SneakyThrows
-    public Map<String, Map<String, Double>> calculateWhatUserOwes(@RequestParam String user) {
-        return balanceService.calculateWhatUserOwes(user);
+    public BalanceDto calculateBalance(@RequestParam String user) {
+        return balanceService.getBalance(user);
     }
 }

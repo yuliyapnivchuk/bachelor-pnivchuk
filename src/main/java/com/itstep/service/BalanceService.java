@@ -1,5 +1,6 @@
 package com.itstep.service;
 
+import com.itstep.dto.BalanceDto;
 import com.itstep.entity.Expense;
 import com.itstep.exception.ExpenseNotFound;
 import com.itstep.exception.NonExistingSplitType;
@@ -20,34 +21,49 @@ public class BalanceService {
 
     private ExpenseRepository expenseRepository;
 
-    public Map<String, Map<String, Double>> calculateWhatUserIsOwed(String user) {
+    public BalanceDto getBalance(String user) {
+        BalanceDto balanceDto = new BalanceDto();
+        Map<String, Map<String, Double>> userIsOwedBalanceDetails = calculateWhatUserIsOwed(user);
+        balanceDto.setUserIsOwed(userIsOwedBalanceDetails);
+        Map<String, Map<String, Double>> userOweBalanceDetails = calculateWhatUserOwes(user);
+        balanceDto.setUserOwes(userOweBalanceDetails);
+        Map<String, Double> userIsOwedTotal = calculateTotal(userIsOwedBalanceDetails);
+        balanceDto.setUserIsOwedTotal(userIsOwedTotal);
+        Map<String, Double> userOwesTotal = calculateTotal(userOweBalanceDetails);
+        balanceDto.setUserOwesTotal(userOwesTotal);
+        Map<String, Double> totalBalance = calculateTotal(userIsOwedTotal, userOwesTotal);
+        balanceDto.setTotalBalance(totalBalance);
+        return balanceDto;
+    }
+
+    private Map<String, Map<String, Double>> calculateWhatUserIsOwed(String user) {
         List<ExpenseItemProjection> list = expenseRepository.findUserIsOwedItems(user);
 
-        Map<String, Map<String, Double>> userDebtsBalance = initUserIsOwedBalanceMap(list);
-        Map<Integer, String> itemsAndItsSplitTypes = getItemsAndItsSplitTypes(list);
+        Map<String, Map<String, Double>> userIsOwedBalance = initUserIsOwedBalanceMap(list);
+        Map<String, String> itemsAndItsSplitTypes = getItemsAndItsSplitTypes(list);
 
-        for (Map.Entry<Integer, String> expenseItems : itemsAndItsSplitTypes.entrySet()) {
+        for (Map.Entry<String, String> expenseItems : itemsAndItsSplitTypes.entrySet()) {
 
             List<ExpenseItemProjection> itemShareComponents = list
                     .stream()
-                    .filter(i -> i.getItemId().equals(expenseItems.getKey()))
+                    .filter(i -> (i.getExpenseId() + "-" + i.getItemId()).equals(expenseItems.getKey()))
                     .toList();
 
             switch (SplitType.get(expenseItems.getValue())) {
                 case EQUAL:
-                    userIsOwedBalanceSplitEqually(itemShareComponents, userDebtsBalance);
+                    userIsOwedBalanceSplitEqually(itemShareComponents, userIsOwedBalance);
                     break;
 
                 case SHARES:
-                    userIsOwedBalanceSplitByShares(itemShareComponents, userDebtsBalance);
+                    userIsOwedBalanceSplitByShares(itemShareComponents, userIsOwedBalance);
                     break;
 
                 case PERCENTAGE:
-                    userIsOwedBalanceSplitByPercentage(itemShareComponents, userDebtsBalance);
+                    userIsOwedBalanceSplitByPercentage(itemShareComponents, userIsOwedBalance);
                     break;
 
                 case MANUAL:
-                    userIsOwedBalanceSplitByManuallyEnteredAmounts(itemShareComponents, userDebtsBalance);
+                    userIsOwedBalanceSplitByManuallyEnteredAmounts(itemShareComponents, userIsOwedBalance);
                     break;
 
                 default:
@@ -55,22 +71,22 @@ public class BalanceService {
             }
         }
 
-        userIsOwedBalanceSplitFeeAndTax(list, userDebtsBalance);
-
-        return userDebtsBalance;
+        userIsOwedBalanceSplitFeeAndTax(list, userIsOwedBalance);
+        userIsOwedBalance.remove(user);
+        return userIsOwedBalance;
     }
 
-    public Map<String, Map<String, Double>> calculateWhatUserOwes(String user) {
+    private Map<String, Map<String, Double>> calculateWhatUserOwes(String user) {
         List<ExpenseItemProjection> list = expenseRepository.findUserOweItems(user);
 
         Map<String, Map<String, Double>> userOweBalances = initUserOwesBalanceMap(list);
-        Map<Integer, String> itemsAndItsSplitTypes = getItemsAndItsSplitTypes(list);
+        Map<String, String> itemsAndItsSplitTypes = getItemsAndItsSplitTypes(list);
 
-        for (Map.Entry<Integer, String> expenseItems : itemsAndItsSplitTypes.entrySet()) {
+        for (Map.Entry<String, String> expenseItems : itemsAndItsSplitTypes.entrySet()) {
 
             List<ExpenseItemProjection> itemShareComponents = list
                     .stream()
-                    .filter(i -> i.getItemId().equals(expenseItems.getKey()))
+                    .filter(i -> (i.getExpenseId() + "-" + i.getItemId()).equals(expenseItems.getKey()))
                     .toList();
 
             Optional<ExpenseItemProjection> userOweItem = itemShareComponents
@@ -148,9 +164,10 @@ public class BalanceService {
         return userOweBalances;
     }
 
-    private Map<Integer, String> getItemsAndItsSplitTypes(List<ExpenseItemProjection> list) {
-        Map<Integer, String> itemsAndItsSplitTypes = new HashMap<>();
-        list.forEach(line -> itemsAndItsSplitTypes.putIfAbsent(line.getItemId(), line.getSplitType()));
+    private Map<String, String> getItemsAndItsSplitTypes(List<ExpenseItemProjection> list) {
+        Map<String, String> itemsAndItsSplitTypes = new HashMap<>();
+        list.forEach(line -> itemsAndItsSplitTypes
+                .putIfAbsent(line.getExpenseId() + "-" + line.getItemId(), line.getSplitType()));
         return itemsAndItsSplitTypes;
     }
 
@@ -158,8 +175,7 @@ public class BalanceService {
         for (ExpenseItemProjection tmp : itemShareComponents) {
             Map<String, Double> userBalance = userDebtsBalance.get(tmp.getUserName());
             Double userShare = tmp.getTotalPrice() / itemShareComponents.size();
-            Double existingAmount = userBalance.get(tmp.getCurrency());
-            userBalance.put(tmp.getCurrency(), existingAmount + userShare);
+            userBalance.merge(tmp.getCurrency(), userShare, Double::sum);
         }
     }
 
@@ -168,8 +184,7 @@ public class BalanceService {
 
         Map<String, Double> userBalance = userDebtsBalance.get(userOweItem.getPayer());
         Double userShare = userOweItem.getTotalPrice() / itemShareComponentsSize;
-        Double existingAmount = userBalance.get(userOweItem.getCurrency());
-        userBalance.put(userOweItem.getCurrency(), existingAmount + userShare);
+        userBalance.merge(userOweItem.getCurrency(), userShare, Double::sum);
     }
 
     private void userIsOwedBalanceSplitByShares(List<ExpenseItemProjection> itemShareComponents,
@@ -182,8 +197,7 @@ public class BalanceService {
         for (ExpenseItemProjection tmp : itemShareComponents) {
             Map<String, Double> userBalance = userDebtsBalance.get(tmp.getUserName());
             Double userShare = tmp.getTotalPrice() / shareSum * tmp.getValue();
-            Double existingAmount = userBalance.get(tmp.getCurrency());
-            userBalance.put(tmp.getCurrency(), existingAmount + userShare);
+            userBalance.merge(tmp.getCurrency(), userShare, Double::sum);
         }
     }
 
@@ -197,16 +211,14 @@ public class BalanceService {
 
         Map<String, Double> userBalance = userOweBalances.get(userOweItem.getPayer());
         Double userShare = userOweItem.getTotalPrice() / shareSum * userOweItem.getValue();
-        Double existingAmount = userBalance.get(userOweItem.getCurrency());
-        userBalance.put(userOweItem.getCurrency(), existingAmount + userShare);
+        userBalance.merge(userOweItem.getCurrency(), userShare, Double::sum);
     }
 
     private void userIsOwedBalanceSplitByPercentage(List<ExpenseItemProjection> itemShareComponents, Map<String, Map<String, Double>> userDebtsBalance) {
         for (ExpenseItemProjection tmp : itemShareComponents) {
             Map<String, Double> userBalance = userDebtsBalance.get(tmp.getUserName());
             Double percentageAmount = tmp.getTotalPrice() / 100 * tmp.getValue();
-            Double existingAmount = userBalance.get(tmp.getCurrency());
-            userBalance.put(tmp.getCurrency(), existingAmount + percentageAmount);
+            userBalance.merge(tmp.getCurrency(), percentageAmount, Double::sum);
         }
     }
 
@@ -214,23 +226,20 @@ public class BalanceService {
                                                   Map<String, Map<String, Double>> userOweBalances) {
         Map<String, Double> userBalance = userOweBalances.get(userOweItem.getPayer());
         Double userShare = userOweItem.getTotalPrice() / 100 * userOweItem.getValue();
-        Double existingAmount = userBalance.get(userOweItem.getCurrency());
-        userBalance.put(userOweItem.getCurrency(), existingAmount + userShare);
+        userBalance.merge(userOweItem.getCurrency(), userShare, Double::sum);
     }
 
     private void userIsOwedBalanceSplitByManuallyEnteredAmounts(List<ExpenseItemProjection> itemShareComponents, Map<String, Map<String, Double>> userDebtsBalance) {
         for (ExpenseItemProjection tmp : itemShareComponents) {
             Map<String, Double> userBalance = userDebtsBalance.get(tmp.getUserName());
-            Double existingAmount = userBalance.get(tmp.getCurrency());
-            userBalance.put(tmp.getCurrency(), existingAmount + tmp.getValue());
+            userBalance.merge(tmp.getCurrency(), tmp.getValue(), Double::sum);
         }
     }
 
     private void userOwesBalanceSplitByManuallyEnteredAmounts(ExpenseItemProjection userOweItem,
                                                               Map<String, Map<String, Double>> userOweBalances) {
         Map<String, Double> userBalance = userOweBalances.get(userOweItem.getPayer());
-        Double existingAmount = userBalance.get(userOweItem.getCurrency());
-        userBalance.put(userOweItem.getCurrency(), existingAmount + userOweItem.getValue());
+        userBalance.merge(userOweItem.getCurrency(), userOweItem.getValue(), Double::sum);
     }
 
     @SneakyThrows
@@ -260,8 +269,7 @@ public class BalanceService {
 
             for (String user : expenseUsers) {
                 Map<String, Double> userBalance = userDebtsBalance.get(user);
-                Double existingAmount = userBalance.get(expense.getCurrency());
-                userBalance.put(expense.getCurrency(), existingAmount + feeAndTaxUserFraction);
+                userBalance.merge(expense.getCurrency(), feeAndTaxUserFraction, Double::sum);
             }
         }
     }
@@ -293,8 +301,27 @@ public class BalanceService {
             Double feeAndTaxUserFraction = feeAndTax / expenseUsers.size();
 
             Map<String, Double> userBalance = userOweBalances.get(expense.getPayer().getName());
-            Double existingAmount = userBalance.get(expense.getCurrency());
-            userBalance.put(expense.getCurrency(), existingAmount + feeAndTaxUserFraction);
+            userBalance.merge(expense.getCurrency(), feeAndTaxUserFraction, Double::sum);
         }
+    }
+
+    private Map<String, Double> calculateTotal(Map<String, Map<String, Double>> userOweBalance) {
+        Map<String, Double> userOwesTotal = new HashMap<>();
+        for (Map<String, Double> userMap : userOweBalance.values()) {
+            for (Map.Entry<String, Double> entry : userMap.entrySet()) {
+                String currency = entry.getKey();
+                Double amount = entry.getValue();
+                userOwesTotal.merge(currency, amount, Double::sum);
+            }
+        }
+        return userOwesTotal;
+    }
+
+    private Map<String, Double> calculateTotal(Map<String, Double> userIsOwedTotal, Map<String, Double> userOwesTotal) {
+        Map<String, Double> totalBalance = new HashMap<>(userIsOwedTotal);
+        userOwesTotal.forEach((currency, amount) ->
+                totalBalance.merge(currency, -amount, Double::sum)
+        );
+        return totalBalance;
     }
 }
