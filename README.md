@@ -22,9 +22,8 @@ curl -X POST http://127.0.0.1:8080/expense/create \
      -d '{
   "id": null,
   "eventId": 1,
-  "payedBy": null,
-  "shareWith": null,
-  "summary": null,
+  "payedBy": "user3",
+  "summary": "Обід в ресторані",
   "items": [
     {
       "id": null,
@@ -32,40 +31,13 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "price": 65,
       "quantity": 3,
       "totalPrice": 195,
-      "splitType": null,
-      "divideBetween": [
-        "user1",
-        "user2"
+      "splitType": "=",
+      "splitDetails": [
+        {
+          "user": "user2",
+          "value": null
+        }
       ]
-    },
-    {
-      "id": null,
-      "description": "Вареники з картоплею по духу",
-      "price": 120,
-      "quantity": null,
-      "totalPrice": 120,
-      "splitType": null,
-      "divideBetween": [
-        "user1"
-      ]
-    },
-    {
-      "id": null,
-      "description": "Голубці",
-      "price": 125,
-      "quantity": 1,
-      "totalPrice": 125,
-      "splitType": null,
-      "divideBetween": null
-    },
-    {
-      "id": null,
-      "description": "Кава американо",
-      "price": 50,
-      "quantity": 1,
-      "totalPrice": 50,
-      "splitType": null,
-      "divideBetween": null
     },
     {
       "id": null,
@@ -73,26 +45,17 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "price": 85,
       "quantity": 2,
       "totalPrice": 170,
-      "splitType": null,
-      "divideBetween": null
-    },
-    {
-      "id": null,
-      "description": "Кріль в сметані",
-      "price": 268,
-      "quantity": 2,
-      "totalPrice": 536,
-      "splitType": null,
-      "divideBetween": null
-    },
-    {
-      "id": null,
-      "description": "Пляцки з білими грибами",
-      "price": 215,
-      "quantity": null,
-      "totalPrice": 215,
-      "splitType": null,
-      "divideBetween": null
+      "splitType": "shares",
+      "splitDetails": [
+        {
+          "user": "user2",
+          "value": "1"
+        },
+        {
+          "user": "user1",
+          "value": "1"
+        }
+      ]
     },
     {
       "id": null,
@@ -100,17 +63,17 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "price": 210,
       "quantity": 1,
       "totalPrice": 210,
-      "splitType": null,
-      "divideBetween": null
-    },
-    {
-      "id": null,
-      "description": "Росіл курячий",
-      "price": 115,
-      "quantity": 2,
-      "totalPrice": 230,
-      "splitType": null,
-      "divideBetween": null
+      "splitType": "%",
+      "splitDetails": [
+        {
+          "user": "user3",
+          "value": "20"
+        },
+        {
+          "user": "user1",
+          "value": "80"
+        }
+      ]
     },
     {
       "id": null,
@@ -118,27 +81,34 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "price": 50,
       "quantity": 0.2,
       "totalPrice": 50,
-      "splitType": null,
-      "divideBetween": null
-    },
-    {
-      "id": null,
-      "description": "Супер тертий пляцок з мясом",
-      "price": 185,
-      "quantity": 1,
-      "totalPrice": 185,
-      "splitType": null,
-      "divideBetween": null
+      "splitType": "manual",
+      "splitDetails": [
+        {
+          "user": "user1",
+          "value": 20
+        },
+        {
+          "user": "user2",
+          "value": 30
+        }
+      ]
     }
   ],
-  "totalAmount": 2086,
-  "subtotalAmount": 2086,
+  "totalAmount": 700,
+  "subtotalAmount": 625,
   "currency": "UAH",
-  "splitType": null,
+  "splitType": "byItem",
+  "splitDetails": null,
   "transactionDate": null,
   "transactionTime": "15:03:00",
   "category": null,
   "status": null,
   "createdBy": null
 }'
+```
+
+#### 3. Get balance
+
+```sh
+curl -X GET "http://127.0.0.1:8080/balance?user=user1"
 ```
