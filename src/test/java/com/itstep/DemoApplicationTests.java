@@ -1,4 +1,4 @@
-package com.itstep.demo;
+package com.itstep;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
