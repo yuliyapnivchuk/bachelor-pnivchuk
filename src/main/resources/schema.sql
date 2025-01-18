@@ -42,16 +42,20 @@ CREATE TABLE IF NOT EXISTS item (
 CREATE TABLE IF NOT EXISTS image (
     id SERIAL PRIMARY KEY,
     image BYTEA,
-    expense_id INT NOT NULL,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+    expense_id INT,
+    note_id INT,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS audio (
     id SERIAL PRIMARY KEY,
     audio BYTEA,
     audio_transcript TEXT,
-    expense_id INT NOT NULL,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+    expense_id INT,
+    note_id INT,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE,
+    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS expense_share (
@@ -70,4 +74,12 @@ CREATE TABLE IF NOT EXISTS item_share (
     value NUMERIC,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS notes (
+    id SERIAL PRIMARY KEY,
+    expense_id INT NOT NULL,
+    created_by VARCHAR(100),
+    note_text VARCHAR,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );

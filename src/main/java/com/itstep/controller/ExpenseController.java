@@ -1,6 +1,7 @@
 package com.itstep.controller;
 
 import com.itstep.dto.ExpenseDto;
+import com.itstep.dto.NoteDto;
 import com.itstep.service.ExpenseService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -19,5 +20,12 @@ public class ExpenseController {
     @SneakyThrows
     public ExpenseDto createExpense(@RequestBody ExpenseDto expenseDto) {
         return expenseService.addExpense(expenseDto);
+    }
+
+    @PostMapping("/note")
+    @ResponseStatus(HttpStatus.CREATED)
+    @SneakyThrows
+    public NoteDto createNote(@RequestBody NoteDto noteDto) {
+        return expenseService.addNote(noteDto);
     }
 }

@@ -1,11 +1,10 @@
 package com.itstep.service;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.entity.Expense;
-import com.itstep.entity.Item;
-import com.itstep.entity.SplitExpense;
-import com.itstep.entity.SplitItem;
+import com.itstep.dto.NoteDto;
+import com.itstep.entity.*;
 import com.itstep.mapper.ExpenseMapper;
+import com.itstep.mapper.NoteMapper;
 import com.itstep.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,11 @@ public class ExpenseService {
     private ItemRepository itemRepository;
     private UserRepository userRepository;
     private EventRepository eventRepository;
+    private NoteRepository noteRepository;
     private SplitExpenseRepository splitExpenseRepository;
     private SplitItemRepository splitItemRepository;
     private ExpenseMapper expenseMapper;
+    private NoteMapper noteMapper;
 
     public ExpenseDto addExpense(ExpenseDto expenseDto) {
         Expense expense = expenseMapper.toEntity(expenseDto, eventRepository, userRepository);
@@ -61,5 +62,11 @@ public class ExpenseService {
         savedExpense.setItems(items);
         savedExpense.setSplitDetails(splitDetails);
         return expenseMapper.toDto(savedExpense);
+    }
+
+    public NoteDto addNote(NoteDto noteDto) {
+        Note note = noteMapper.toEntity(noteDto, expenseRepository, userRepository);
+        Note savedNote = noteRepository.save(note);
+        return noteMapper.toDto(savedNote);
     }
 }
