@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 @AllArgsConstructor
 public enum SplitType {
-    EQUAL("="), SHARES("shares"), PERCENTAGE("%"), MANUAL("manual");
+    EQUAL("="), SHARES("shares"), PERCENTAGE("%"), MANUAL("manual"), BY_ITEM("byItem");
     public final String type;
 
     public static SplitType get(String type) {

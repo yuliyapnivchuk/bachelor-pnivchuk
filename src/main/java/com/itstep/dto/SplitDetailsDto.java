@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SplitExpenseDto {
+public class SplitDetailsDto {
     private Integer id;
     private String user;
     private Double value;

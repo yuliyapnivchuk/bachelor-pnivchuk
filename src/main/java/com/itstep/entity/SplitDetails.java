@@ -4,24 +4,30 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
-@Table(name = "item_share")
+@Table(name = "split_details")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SplitItem {
+public class SplitDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "expense_id", referencedColumnName = "id")
+    @ToString.Exclude
+    private Expense expense;
+
+    @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_name", referencedColumnName = "name")
     private User user;
 
     @Column(name = "value")

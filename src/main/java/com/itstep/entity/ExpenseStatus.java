@@ -4,6 +4,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ExpenseStatus {
-    DRAFT("DRAFT");
+    DRAFT("DRAFT"), SUBMITTED("SUBMITTED");
     public final String status;
 }

@@ -13,7 +13,7 @@ import org.mapstruct.Named;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = SplitItemMapper.class)
+@Mapper(componentModel = "spring", uses = SplitDetailsMapper.class)
 public interface ItemMapper {
 
     @Mapping(target = "expense", ignore = true)

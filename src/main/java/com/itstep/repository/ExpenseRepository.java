@@ -11,82 +11,75 @@ import java.util.List;
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
     @Query(value = """
-        SELECT 
-            e.id AS expenseId, 
-            i.id AS itemId, 
-            i.total_price AS totalPrice, 
-            e.currency,
-            i.split_type AS splitType, 
-            s.value AS value, 
-            u.name AS userName
-        FROM 
-            item i
-        JOIN 
-            item_share s ON i.id = s.item_id
-        JOIN 
-            users u ON s.user_id = u.id
-        JOIN 
-            expense e ON e.id = i.expense_id
-        WHERE 
-            e.payer = :payer
-        UNION
-        SELECT
-            e.id, 
-            e.id, 
-            e.subtotal_amount,
-            e.currency, 
-            e.split_type, 
-            s.value, 
-            u.name
-        FROM 
-            expense e
-        JOIN
-            expense_share s on s.expense_id = e.id
-        JOIN
-            users u on s.user_id = u.id
-        WHERE 
-            e.payer = :payer
+       SELECT
+           e.id AS expenseId,
+           i.id AS itemId,
+           i.total_price AS totalPrice,
+           e.currency,
+           i.split_type AS splitType,
+           s.value AS value,
+           s.user_name AS userName
+       FROM
+           item i
+       JOIN
+           split_details s ON i.id = s.item_id
+       JOIN
+           expense e ON e.id = i.expense_id
+       WHERE
+           e.payer = :payer
+       UNION
+       SELECT
+           e.id,
+           e.id,
+           e.subtotal_amount,
+           e.currency,
+           e.split_type,
+           s.value,
+           s.user_name
+       FROM
+           expense e
+       JOIN
+           split_details s on s.expense_id = e.id
+       WHERE
+           e.payer = :payer
         """, nativeQuery = true)
     List<ExpenseItemProjection> findUserIsOwedItems(@Param("payer") String payer);
 
     @Query(value = """
-        SELECT 
-            e.id AS expenseId, 
+        SELECT
+            e.id AS expenseId,
             e.payer AS payer,
-            i.id AS itemId, 
-            i.total_price AS totalPrice, 
+            i.id AS itemId,
+            i.total_price AS totalPrice,
             e.currency,
-            i.split_type AS splitType, 
-            s.value AS value, 
-            u.name AS userName
-        FROM 
+            i.split_type AS splitType,
+            s.value AS value,
+            s.user_name AS userName
+        FROM
             item i
-        JOIN 
-            item_share s ON i.id = s.item_id
-        JOIN 
-            users u ON s.user_id = u.id
-        JOIN 
+        JOIN
+            split_details s ON i.id = s.item_id
+        JOIN
             expense e ON e.id = i.expense_id
-        WHERE 
+        WHERE
             e.payer != :payer
         UNION
         SELECT
-            e.id, 
+            e.id,
             e.payer,
-            e.id, 
+            e.id,
             e.subtotal_amount,
-            e.currency, 
-            e.split_type, 
-            s.value, 
-            u.name
-        FROM 
+            e.currency,
+            e.split_type,
+            s.value,
+            s.user_name
+        FROM
             expense e
         JOIN
-            expense_share s on s.expense_id = e.id
-        JOIN
-            users u on s.user_id = u.id
-        WHERE 
+            split_details s on s.expense_id = e.id
+        WHERE
             e.payer != :payer
         """, nativeQuery = true)
     List<ExpenseItemProjection> findUserOweItems(@Param("payer") String payer);
+
 }

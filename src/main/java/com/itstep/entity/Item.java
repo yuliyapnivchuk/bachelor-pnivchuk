@@ -1,10 +1,7 @@
 package com.itstep.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -21,6 +18,7 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "expense_id", referencedColumnName = "id")
+    @ToString.Exclude
     private Expense expense;
 
     @Column(name = "description")
@@ -40,5 +38,5 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
-    private List<SplitItem> splitDetails;
+    private List<SplitDetails> splitDetails;
 }
