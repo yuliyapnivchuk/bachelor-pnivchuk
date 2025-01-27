@@ -68,16 +68,4 @@ public class Expense {
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private List<Item> items = new ArrayList<>();
-
-//    public List<SplitDetails> splitDetails() {
-//        List<SplitDetails> splitDetails = this.splitDetails;
-//        splitDetails.forEach(item -> item.setExpense(this));
-//        return splitDetails;
-//    }
-//
-//    public List<Item> getItems() {
-//        List<Item> items = this.items;
-//        items.forEach(item -> item.setExpense(this));
-//        return items;
-//    }
 }
