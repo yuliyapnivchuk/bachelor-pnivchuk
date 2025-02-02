@@ -19,8 +19,6 @@ public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
 
     @SneakyThrows
     public String convertSpeechToText(String audioFilePath) {
-        System.setProperty("SPEECH_KEY", "1NLa4ghx33nx2d5nhLLwvaGtlw0lSUEgt78bhUwyJhM9pK5USQ85JQQJ99BAACYeBjFXJ3w3AAAYACOGxWYr");
-        System.setProperty("SPEECH_REGION", "eastus");
 
         SpeechConfig speechConfig = SpeechConfig.fromSubscription(
                 System.getProperty("SPEECH_KEY"),
