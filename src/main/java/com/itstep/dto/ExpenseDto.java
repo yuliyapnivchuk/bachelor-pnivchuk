@@ -1,8 +1,6 @@
 package com.itstep.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,7 +8,9 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class ExpenseDto {
     private Integer id;
     private Integer eventId;
@@ -21,7 +21,7 @@ public class ExpenseDto {
     private Double subtotalAmount;
     private String currency;
     private String splitType;
-    private List<SplitDetailsDto> splitDetails;
+    private List<SplitDetailsDto> splitDetails = new ArrayList<>();
     private LocalDate transactionDate;
     private String transactionTime;
     private String category;

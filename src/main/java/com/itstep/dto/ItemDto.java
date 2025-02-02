@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -16,7 +17,7 @@ public class ItemDto {
     private Double quantity;
     private Double totalPrice;
     private String splitType;
-    private List<SplitDetailsDto> splitDetails;
+    private List<SplitDetailsDto> splitDetails = new ArrayList<>();
 
     public static ItemDto createItem() {
         return new ItemDto();

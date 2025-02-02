@@ -1,9 +1,7 @@
 package com.itstep.dto;
 
 import com.itstep.validation.SplitDetailsConstraint;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -12,7 +10,9 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @SplitDetailsConstraint
 public class ExpenseSubmissionDto {
 
@@ -40,7 +40,7 @@ public class ExpenseSubmissionDto {
     @NotNull(message = "Split type is required")
     private String splitType;
 
-    private List<SplitDetailsDto> splitDetails;
+    private List<SplitDetailsDto> splitDetails = new ArrayList<>();
 
     private LocalDate transactionDate;
 

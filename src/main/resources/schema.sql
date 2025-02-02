@@ -39,6 +39,14 @@ CREATE TABLE IF NOT EXISTS item (
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS notes (
+    id SERIAL PRIMARY KEY,
+    expense_id INT NOT NULL,
+    created_by VARCHAR(100),
+    note_text VARCHAR,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS image (
     id SERIAL PRIMARY KEY,
     image BYTEA,
@@ -66,12 +74,4 @@ CREATE TABLE IF NOT EXISTS split_details (
     value NUMERIC,
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE,
     FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS notes (
-    id SERIAL PRIMARY KEY,
-    expense_id INT NOT NULL,
-    created_by VARCHAR(100),
-    note_text VARCHAR,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );

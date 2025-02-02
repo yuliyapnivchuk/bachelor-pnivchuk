@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class SplitDetailsDto {
     private Integer id;
-    private String user;
+    private String userName;
     private Double value;
 }

@@ -1,14 +1,14 @@
 package com.itstep.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class BalanceDto {
     private Map<String, Double> totalBalance;
     private Map<String, Double> userOwesTotal;

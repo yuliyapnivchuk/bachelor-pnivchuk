@@ -17,24 +17,31 @@ public class ExpenseController {
 
     private ExpenseService expenseService;
 
-    @PostMapping("/create")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SneakyThrows
     public ExpenseDto createExpense(@RequestBody ExpenseDto expenseDto) {
         return expenseService.addExpense(expenseDto);
     }
 
-    @PostMapping("/note")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @SneakyThrows
-    public NoteDto createNote(@RequestBody NoteDto noteDto) {
-        return expenseService.addNote(noteDto);
+    public ExpenseDto updateExpense(@RequestBody ExpenseDto expenseDto) {
+        return expenseService.updateExpense(expenseDto);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @SneakyThrows
+    public ExpenseDto getExpense(@RequestParam Integer expenseId) {
+        return expenseService.getExpense(expenseId);
     }
 
     @PostMapping("/submit")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @SneakyThrows
-    public ExpenseDto updateExpense(@Valid @RequestBody ExpenseSubmissionDto expenseDto) {
+    public ExpenseDto submitExpense(@Valid @RequestBody ExpenseSubmissionDto expenseDto) {
         return expenseService.submitExpense(expenseDto);
     }
 }

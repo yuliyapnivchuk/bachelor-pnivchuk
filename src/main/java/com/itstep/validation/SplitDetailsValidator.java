@@ -19,33 +19,24 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
         SplitType SPLIT_TYPE = SplitType.get(expenseSubmissionDto.getSplitType());
         List<SplitDetailsDto> splitDetails = expenseSubmissionDto.getSplitDetails();
 
-        switch (SPLIT_TYPE) {
-            case EQUAL:
-                return validateSplitDetailsNotNull(SPLIT_TYPE, splitDetails, context)
-                        && validateUserNotNull(SPLIT_TYPE, splitDetails, context);
-
-            case SHARES, MANUAL:
-                return validateSplitDetailsNotNull(SPLIT_TYPE, splitDetails, context)
-                        && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
-                        && validateValueNotNull(SPLIT_TYPE, splitDetails, context);
-
-            case PERCENTAGE:
-                return validateSplitDetailsNotNull(SPLIT_TYPE, splitDetails, context)
-                        && validatePercentageSplit(SPLIT_TYPE, splitDetails, context)
-                        && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
-                        && validateValueNotNull(SPLIT_TYPE, splitDetails, context);
-
-            case BY_ITEM:
-                return validateByItem(expenseSubmissionDto, context);
-
-            default:
-                throw new NonExistingSplitType("Non existing split type");
-        }
+        return switch (SPLIT_TYPE) {
+            case EQUAL -> validateSplitDetailsNotNull(SPLIT_TYPE, splitDetails, context)
+                    && validateUserNotNull(SPLIT_TYPE, splitDetails, context);
+            case SHARES, MANUAL -> validateSplitDetailsNotNull(SPLIT_TYPE, splitDetails, context)
+                    && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
+                    && validateValueNotNull(SPLIT_TYPE, splitDetails, context);
+            case PERCENTAGE -> validateSplitDetailsNotNull(SPLIT_TYPE, splitDetails, context)
+                    && validatePercentageSplit(SPLIT_TYPE, splitDetails, context)
+                    && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
+                    && validateValueNotNull(SPLIT_TYPE, splitDetails, context);
+            case BY_ITEM -> validateByItem(expenseSubmissionDto, context);
+            default -> throw new NonExistingSplitType("Non existing split type");
+        };
     }
 
     private boolean validateUserNotNull(SplitType SPLIT_TYPE, List<SplitDetailsDto> splitDetails,
                                         ConstraintValidatorContext context) {
-        boolean isValid = splitDetails.stream().noneMatch(item -> item.getUser() == null);
+        boolean isValid = splitDetails.stream().noneMatch(item -> item.getUserName() == null);
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Missing User for Split Type: " + SPLIT_TYPE.type)
@@ -120,27 +111,17 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
             }
 
             switch (SPLIT_TYPE) {
-                case EQUAL:
-                    isValid.add(validateUserNotNull(SPLIT_TYPE, splitDetails, context));
-                    break;
-
-                case SHARES, MANUAL:
-                    isValid.add(
-                            validateUserNotNull(SPLIT_TYPE, splitDetails, context)
-                                    && validateValueNotNull(SPLIT_TYPE, splitDetails, context)
-                    );
-                    break;
-
-                case PERCENTAGE:
-                    isValid.add(
-                            validatePercentageSplit(SPLIT_TYPE, splitDetails, context)
-                                    && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
-                                    && validateValueNotNull(SPLIT_TYPE, splitDetails, context)
-                    );
-                    break;
-
-                default:
-                    throw new NonExistingSplitType("Non existing split type");
+                case EQUAL -> isValid.add(validateUserNotNull(SPLIT_TYPE, splitDetails, context));
+                case SHARES, MANUAL -> isValid.add(
+                        validateUserNotNull(SPLIT_TYPE, splitDetails, context)
+                                && validateValueNotNull(SPLIT_TYPE, splitDetails, context)
+                );
+                case PERCENTAGE -> isValid.add(
+                        validatePercentageSplit(SPLIT_TYPE, splitDetails, context)
+                                && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
+                                && validateValueNotNull(SPLIT_TYPE, splitDetails, context)
+                );
+                default -> throw new NonExistingSplitType("Non existing split type");
             }
         }
 

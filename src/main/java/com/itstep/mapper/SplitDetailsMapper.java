@@ -4,7 +4,6 @@ import com.itstep.dto.SplitDetailsDto;
 import com.itstep.entity.Expense;
 import com.itstep.entity.Item;
 import com.itstep.entity.SplitDetails;
-import com.itstep.repository.UserRepository;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,12 +15,10 @@ import java.util.List;
 public interface SplitDetailsMapper {
     @Mapping(target = "expense", ignore = true)
     @Mapping(target = "item", ignore = true)
-    @Mapping(source = "user", target = "user", qualifiedByName = "mapUserNameToUserEntity")
-    SplitDetails toEntityIgnoreExpenseItem(SplitDetailsDto splitDetailsDto, @Context UserRepository userRepository);
+    SplitDetails toEntityIgnoreExpenseItem(SplitDetailsDto splitDetailsDto);
 
-    default SplitDetails toEntity(SplitDetailsDto splitDetailsDto, @Context Expense expense, @Context Item item,
-                                  @Context UserRepository userRepository) {
-        SplitDetails splitDetails = toEntityIgnoreExpenseItem(splitDetailsDto, userRepository);
+    default SplitDetails toEntity(SplitDetailsDto splitDetailsDto, @Context Expense expense, @Context Item item) {
+        SplitDetails splitDetails = toEntityIgnoreExpenseItem(splitDetailsDto);
         splitDetails.setExpense(expense);
         splitDetails.setItem(item);
         return splitDetails;
@@ -29,13 +26,11 @@ public interface SplitDetailsMapper {
 
     @Named("mapSplitExpenseDtoListToSplitExpenseEntityList")
     default List<SplitDetails> mapSplitExpenseDtoListToSplitExpenseEntityList(List<SplitDetailsDto> splitDetailsDtoList,
-                                                                              @Context Expense expense, @Context Item item,
-                                                                              @Context UserRepository userRepository) {
+                                                                              @Context Expense expense, @Context Item item) {
         return splitDetailsDtoList.stream()
-                .map(splitDetailsDto -> toEntity(splitDetailsDto, expense, item, userRepository))
+                .map(splitDetailsDto -> toEntity(splitDetailsDto, expense, item))
                 .toList();
     }
 
-    @Mapping(source = "user", target = "user", qualifiedByName = "mapUserEntityToUserName")
     SplitDetailsDto toDto(SplitDetails splitDetails);
 }
