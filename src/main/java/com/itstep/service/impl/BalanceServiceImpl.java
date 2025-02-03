@@ -88,8 +88,7 @@ public class BalanceServiceImpl implements BalanceService {
             }
 
             switch (SplitType.get(expenseItems.getValue())) {
-                case EQUAL ->
-                        userOwesBalanceSplitEqually(itemShareComponents.size(), userOweItem.get(), userOweBalances);
+                case EQUAL -> userOwesBalanceSplitEqually(itemShareComponents.size(), userOweItem.get(), userOweBalances);
                 case SHARES -> userOwesBalanceSplitByShares(itemShareComponents, userOweItem.get(), userOweBalances);
                 case PERCENTAGE -> userOwesBalanceSplitByPercentage(userOweItem.get(), userOweBalances);
                 case MANUAL -> userOwesBalanceSplitByManuallyEnteredAmounts(userOweItem.get(), userOweBalances);

@@ -1,12 +1,12 @@
 package com.itstep.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class SplitDetailsDto {
     private Integer id;
     private String userName;

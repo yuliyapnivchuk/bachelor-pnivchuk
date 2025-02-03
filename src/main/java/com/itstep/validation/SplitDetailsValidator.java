@@ -30,7 +30,6 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
                     && validateUserNotNull(SPLIT_TYPE, splitDetails, context)
                     && validateValueNotNull(SPLIT_TYPE, splitDetails, context);
             case BY_ITEM -> validateByItem(expenseSubmissionDto, context);
-            default -> throw new NonExistingSplitType("Non existing split type");
         };
     }
 

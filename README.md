@@ -34,7 +34,7 @@ curl -X POST http://127.0.0.1:8080/expense \
       "splitType": "=",
       "splitDetails": [
         {
-          "user": "user2",
+          "userName": "user2",
           "value": null
         }
       ]
@@ -48,11 +48,11 @@ curl -X POST http://127.0.0.1:8080/expense \
       "splitType": "shares",
       "splitDetails": [
         {
-          "user": "user2",
+          "userName": "user2",
           "value": "1"
         },
         {
-          "user": "user1",
+          "userName": "user1",
           "value": "1"
         }
       ]
@@ -66,7 +66,7 @@ curl -X POST http://127.0.0.1:8080/expense \
       "splitType": "%",
       "splitDetails": [
         {
-          "user": "user3",
+          "userName": "user3",
           "value": "20"
         },
         {
@@ -84,11 +84,11 @@ curl -X POST http://127.0.0.1:8080/expense \
       "splitType": "manual",
       "splitDetails": [
         {
-          "user": "user1",
+          "userName": "user1",
           "value": 20
         },
         {
-          "user": "user2",
+          "userName": "user2",
           "value": 30
         }
       ]
