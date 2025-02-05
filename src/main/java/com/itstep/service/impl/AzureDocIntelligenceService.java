@@ -98,32 +98,33 @@ public class AzureDocIntelligenceService implements AnalyseInvoiceService {
         for (Map<String, DocumentField> item : invoiceItems) {
             ItemDto itemDto = createItem();
 
-            item.forEach((key, documentField) -> {
+            for (Map.Entry<String, DocumentField> itemAttribute : item.entrySet()) {
+                DocumentField documentField = itemAttribute.getValue();
 
                 if (documentField.getConfidence() <= CONFIDENCE_LEVEL_THRESHOLD) {
-                    return;
+                    continue;
                 }
 
-                switch (key) {
-                    case "Description":
+                switch (itemAttribute.getKey()) {
+                    case "Description" -> {
                         String value = (STRING == documentField.getType()) ? deleteSpecChars(documentField.getContent()) : null;
                         itemDto.setDescription(value);
-                        break;
-                    case "Price":
+                    }
+                    case "Price" -> {
                         Double price = (CURRENCY == documentField.getType()) ? documentField.getValueCurrency().getAmount() : null;
                         itemDto.setPrice(price);
-                        break;
-                    case "Quantity":
+                    }
+                    case "Quantity" -> {
                         Double quantity = (NUMBER == documentField.getType()) ? documentField.getValueNumber() : null;
                         itemDto.setQuantity(quantity);
-                        break;
-                    case "TotalPrice":
+                    }
+                    case "TotalPrice" -> {
                         Double totalPrice = (CURRENCY == documentField.getType()) ? documentField.getValueCurrency().getAmount() : null;
                         itemDto.setTotalPrice(totalPrice);
-                        break;
+                    }
                 }
                 expenseItems.add(itemDto);
-            });
+            }
         }
         return expenseItems;
     }
