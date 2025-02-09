@@ -9,6 +9,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@Builder
 public class BalanceDto {
     private Map<String, Double> totalBalance;
     private Map<String, Double> userOwesTotal;

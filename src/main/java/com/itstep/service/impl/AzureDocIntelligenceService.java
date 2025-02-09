@@ -5,7 +5,7 @@ import com.azure.ai.documentintelligence.models.*;
 import com.azure.core.util.polling.SyncPoller;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ItemDto;
-import com.itstep.service.AnalyseInvoiceService;
+import com.itstep.service.ScanReceiptService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ import static com.itstep.util.StringUtil.deleteSpecChars;
 
 @Service
 @AllArgsConstructor
-public class AzureDocIntelligenceService implements AnalyseInvoiceService {
+public class AzureDocIntelligenceService implements ScanReceiptService {
 
     private final Double CONFIDENCE_LEVEL_THRESHOLD = 0.90;
 
     private DocumentIntelligenceClient client;
 
-    public ExpenseDto analyseInvoice(byte[] image) {
+    public ExpenseDto scanReceipt(byte[] image) {
         AnalyzeResult result = callService(image);
         return parseResult(result);
     }

@@ -11,7 +11,7 @@
 #### 1. Analyze receipt
 
 ```sh
-curl -v -X POST http://127.0.0.1:8080/receipt/analyze -F "file=@./src/test/resources/templates/test3.jpg"
+curl -v -X POST http://127.0.0.1:8080/receipt/scan -F "file=@./src/test/resources/templates/test3.jpg"
 ```
 
 #### 2. Create expense

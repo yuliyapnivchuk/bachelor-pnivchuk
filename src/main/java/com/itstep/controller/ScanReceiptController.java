@@ -1,6 +1,6 @@
 package com.itstep.controller;
 
-import com.itstep.service.AnalyseInvoiceService;
+import com.itstep.service.ScanReceiptService;
 import com.itstep.dto.ExpenseDto;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -11,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/receipt")
-public class AnalyseInvoiceController {
-    private AnalyseInvoiceService service;
+public class ScanReceiptController {
+    private ScanReceiptService service;
 
-    @PostMapping("/analyze")
+    @PostMapping("/scan")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @SneakyThrows
-    public ExpenseDto analyze(@RequestParam("file") MultipartFile image) {
-        return service.analyseInvoice(image.getBytes());
+    public ExpenseDto scanReceipt(@RequestParam("file") MultipartFile image) {
+        return service.scanReceipt(image.getBytes());
     }
 }
