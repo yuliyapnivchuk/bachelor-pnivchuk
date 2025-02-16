@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS expense (
     transaction_time TIME,
     category VARCHAR(100),
     status VARCHAR(20),
+    image VARCHAR(100),
     FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
     FOREIGN KEY (payer) REFERENCES users(name) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(name) ON DELETE CASCADE
@@ -45,25 +46,6 @@ CREATE TABLE IF NOT EXISTS notes (
     created_by VARCHAR(100),
     note_text VARCHAR,
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS image (
-    id SERIAL PRIMARY KEY,
-    image BYTEA,
-    expense_id INT,
-    note_id INT,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE,
-    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS audio (
-    id SERIAL PRIMARY KEY,
-    audio BYTEA,
-    audio_transcript TEXT,
-    expense_id INT,
-    note_id INT,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE,
-    FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS split_details (

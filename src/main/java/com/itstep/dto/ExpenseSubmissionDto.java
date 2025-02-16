@@ -52,4 +52,6 @@ public class ExpenseSubmissionDto {
 
     @NotNull(message = "Created by is required")
     private String createdBy;
+
+    private String image;
 }

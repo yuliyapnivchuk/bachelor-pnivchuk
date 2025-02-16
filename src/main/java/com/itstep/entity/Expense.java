@@ -66,6 +66,9 @@ public class Expense {
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
 
+    @Column(name = "image")
+    private String image;
+
     public void setSplitDetails(List<SplitDetails> splitDetails) {
         if (splitDetails == null) {
             this.splitDetails.clear();

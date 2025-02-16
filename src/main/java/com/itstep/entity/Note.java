@@ -16,9 +16,8 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "expense_id", referencedColumnName = "id")
-    private Expense expense;
+    @Column(name = "expense_id")
+    private String expenseId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "name")

@@ -2,7 +2,6 @@ package com.itstep.controller;
 
 import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ExpenseSubmissionDto;
-import com.itstep.dto.NoteDto;
 import com.itstep.service.ExpenseService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -31,10 +30,10 @@ public class ExpenseController {
         return expenseService.updateExpense(expenseDto);
     }
 
-    @GetMapping
+    @GetMapping("{expenseId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @SneakyThrows
-    public ExpenseDto getExpense(@RequestParam Integer expenseId) {
+    public ExpenseDto getExpense(@PathVariable Integer expenseId) {
         return expenseService.getExpense(expenseId);
     }
 

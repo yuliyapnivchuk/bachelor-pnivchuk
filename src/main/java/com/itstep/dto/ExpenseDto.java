@@ -27,4 +27,5 @@ public class ExpenseDto {
     private String category;
     private String status;
     private String createdBy;
+    private String image;
 }
