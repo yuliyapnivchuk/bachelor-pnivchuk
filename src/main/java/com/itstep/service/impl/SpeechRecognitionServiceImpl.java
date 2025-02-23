@@ -28,10 +28,6 @@ public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     @Value("${azure.speech.supported.languages}")
     private String languages;
 
-    public SpeechRecognitionServiceImpl(@Value("${azure.speech.supported.languages}") String languages) {
-        this.languages = languages;
-    }
-
     @SneakyThrows
     public String convertSpeechToText(String audioFilePath) {
 
