@@ -4,29 +4,38 @@ import com.itstep.exception.SpeechCouldNotBeRecognized;
 import com.itstep.service.SpeechRecognitionService;
 import com.microsoft.cognitiveservices.speech.*;
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import static com.itstep.exception.ConstantsUtility.SPEECH_COULD_NOT_BE_RECOGNIZED;
+import static com.microsoft.cognitiveservices.speech.AutoDetectSourceLanguageConfig.fromLanguages;
+import static com.microsoft.cognitiveservices.speech.ResultReason.Canceled;
+import static com.microsoft.cognitiveservices.speech.ResultReason.RecognizedSpeech;
+import static com.microsoft.cognitiveservices.speech.CancellationReason.Error;
 
 @Service
-@AllArgsConstructor
 public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
+
+    @Autowired
+    private SpeechConfig speechConfig;
+
+    @Value("${azure.speech.supported.languages}")
+    private String languages;
+
+    public SpeechRecognitionServiceImpl(@Value("${azure.speech.supported.languages}") String languages) {
+        this.languages = languages;
+    }
 
     @SneakyThrows
     public String convertSpeechToText(String audioFilePath) {
 
-        SpeechConfig speechConfig = SpeechConfig.fromSubscription(
-                System.getProperty("SPEECH_KEY"),
-                System.getProperty("SPEECH_REGION")
-        );
-
-        AutoDetectSourceLanguageConfig autoDetectSourceLanguageConfig =
-                AutoDetectSourceLanguageConfig.fromLanguages(Arrays.asList("en-US", "uk-UA"));
+        AutoDetectSourceLanguageConfig autoDetectSourceLanguageConfig = fromLanguages(getSupportedLanguages());
 
         AudioConfig audioConfig = AudioConfig.fromWavFileInput(audioFilePath);
         SpeechRecognizer speechRecognizer = new SpeechRecognizer(speechConfig, autoDetectSourceLanguageConfig, audioConfig);
@@ -34,13 +43,13 @@ public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
         Future<SpeechRecognitionResult> task = speechRecognizer.recognizeOnceAsync();
         SpeechRecognitionResult speechRecognitionResult = task.get();
 
-        if (speechRecognitionResult.getReason() == ResultReason.RecognizedSpeech) {
+        if (speechRecognitionResult.getReason() == RecognizedSpeech) {
             return speechRecognitionResult.getText();
-        } else if (speechRecognitionResult.getReason() == ResultReason.Canceled) {
+        } else if (speechRecognitionResult.getReason() == Canceled) {
             CancellationDetails cancellation = CancellationDetails.fromResult(speechRecognitionResult);
             String errorMsg = SPEECH_COULD_NOT_BE_RECOGNIZED + cancellation.getReason();
 
-            if (cancellation.getReason() == CancellationReason.Error) {
+            if (cancellation.getReason() == Error) {
                 errorMsg = errorMsg + cancellation.getErrorCode() + cancellation.getErrorDetails();
             }
 
@@ -48,5 +57,9 @@ public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
         } else {
             throw new SpeechCouldNotBeRecognized(SPEECH_COULD_NOT_BE_RECOGNIZED);
         }
+    }
+
+    private List<String> getSupportedLanguages() {
+        return Arrays.asList(languages.split(","));
     }
 }

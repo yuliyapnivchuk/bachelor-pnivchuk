@@ -17,7 +17,7 @@ public class Note {
     private Integer id;
 
     @Column(name = "expense_id")
-    private String expenseId;
+    private Integer expenseId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "name")
