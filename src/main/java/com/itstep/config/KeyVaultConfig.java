@@ -1,9 +1,7 @@
 package com.itstep.config;
 
 import com.azure.core.credential.TokenCredential;
-import com.azure.identity.AzureCliCredentialBuilder;
-import com.azure.identity.ManagedIdentityCredential;
-import com.azure.identity.ManagedIdentityCredentialBuilder;
+import com.azure.identity.*;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +15,8 @@ public class KeyVaultConfig {
 
     @Bean
     public SecretClient keyVaultClient() {
-        TokenCredential credential = new AzureCliCredentialBuilder().build();
+//        TokenCredential credential = new AzureCliCredentialBuilder().build();
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 
 //        ManagedIdentityCredential credential = new ManagedIdentityCredentialBuilder().build();
 

@@ -1,8 +1,11 @@
-FROM postgres:14.3
+FROM openjdk:21-jdk-slim
 
-# Set environment variables for PostgreSQL
-ENV POSTGRES_DB=itstep
-ENV POSTGRES_USER=itstep
-ENV POSTGRES_PASSWORD=itstep123
-# Postgres default port
-EXPOSE 5432
+ARG JAR_FILE=build/libs/*.jar
+
+ENV AZURE_CLIENT_ID=sidfhisudhf
+ENV AZURE_TENANT_ID=sdkfjsdfj
+ENV AZURE_CLIENT_SECRET=sdfshdfh
+
+COPY ${JAR_FILE} application.jar
+
+ENTRYPOINT ["java", "-Xmx2048M", "-jar", "/application.jar"]

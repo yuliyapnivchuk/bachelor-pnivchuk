@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/itstep
+      - SPRING_DATASOURCE_USERNAME=itstep
+      - SPRING_DATASOURCE_PASSWORD=itstep123
+    ports:
+      - "8080:8080"
+
+  db:
+    image: postgres:14.3
+    container_name: db
+    environment:
+      - POSTGRES_USER=itstep
+      - POSTGRES_PASSWORD=itstep123
+      - POSTGRES_DB=itstep
+    ports:
+      - "5432:5432"
