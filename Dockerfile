@@ -1,10 +1,8 @@
-FROM openjdk:21-jdk-slim
+FROM --platform=linux/amd64 postgres:14.3 as db
 
-ARG JAR_FILE=build/libs/*.jar
+FROM --platform=linux/amd64 openjdk:21-jdk-slim as app
 
-ENV AZURE_CLIENT_ID=sidfhisudhf
-ENV AZURE_TENANT_ID=sdkfjsdfj
-ENV AZURE_CLIENT_SECRET=sdfshdfh
+ARG JAR_FILE=build/libs/demo-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} application.jar
 

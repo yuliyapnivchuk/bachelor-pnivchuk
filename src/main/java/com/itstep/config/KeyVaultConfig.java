@@ -1,6 +1,5 @@
 package com.itstep.config;
 
-import com.azure.core.credential.TokenCredential;
 import com.azure.identity.*;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
@@ -15,8 +14,9 @@ public class KeyVaultConfig {
 
     @Bean
     public SecretClient keyVaultClient() {
-//        TokenCredential credential = new AzureCliCredentialBuilder().build();
-        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder()
+                .additionallyAllowedTenants("*")
+                .build();
 
 //        ManagedIdentityCredential credential = new ManagedIdentityCredentialBuilder().build();
 
