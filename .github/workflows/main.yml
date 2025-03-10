@@ -31,7 +31,11 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-            
+          
+      - name: Generate jar
+        run: |
+          ./gradlew bootJar   
+          
       - name: Build and push Docker images with docker compose
         run: |
           docker compose -f docker-compose.yml build
