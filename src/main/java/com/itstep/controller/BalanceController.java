@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @AllArgsConstructor
 @RestController
 @RequestMapping("/balance")

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS expense (
     transaction_time TIME,
     category VARCHAR(100),
     status VARCHAR(20),
+    image VARCHAR(100),
     FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
     FOREIGN KEY (payer) REFERENCES users(name) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(name) ON DELETE CASCADE
@@ -39,35 +40,20 @@ CREATE TABLE IF NOT EXISTS item (
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS image (
+CREATE TABLE IF NOT EXISTS notes (
     id SERIAL PRIMARY KEY,
-    image BYTEA,
     expense_id INT NOT NULL,
+    created_by VARCHAR(100),
+    note_text VARCHAR,
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS audio (
+CREATE TABLE IF NOT EXISTS split_details (
     id SERIAL PRIMARY KEY,
-    audio BYTEA,
-    audio_transcript TEXT,
-    expense_id INT NOT NULL,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS expense_share (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    expense_id INT NOT NULL,
+    user_name VARCHAR(100),
+    expense_id INT,
+    item_id INT,
     value NUMERIC,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS item_share (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    item_id INT NOT NULL,
-    value NUMERIC,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE,
     FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
 );

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    image: itstep.azurecr.io/app:latest
+    build:
+      target: app
+    container_name: app
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+  db:
+    image: itstep.azurecr.io/db:latest
+    build:
+      target: db
+    container_name: db
+    ports:
+      - "5432:5432"

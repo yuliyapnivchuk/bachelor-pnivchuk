@@ -1,6 +1,7 @@
 package com.itstep.mapper;
 
 import com.itstep.dto.ExpenseDto;
+import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.entity.Event;
 import com.itstep.entity.Expense;
 import com.itstep.exception.EventNotFound;
@@ -13,7 +14,7 @@ import org.mapstruct.Named;
 
 import static com.itstep.exception.ConstantsUtility.EVENT_WITH_SUCH_ID_NOT_FOUND;
 
-@Mapper(componentModel = "spring", uses = {ItemMapper.class, SplitExpenseMapper.class, UserMapper.class})
+@Mapper(componentModel = "spring", uses = {ItemMapper.class, SplitDetailsMapper.class, UserMapper.class})
 public interface ExpenseMapper {
     @Mapping(source = "payedBy", target = "payer", qualifiedByName = "mapUserNameToUserEntity")
     @Mapping(source = "createdBy", target = "createdBy", qualifiedByName = "mapUserNameToUserEntity")
@@ -32,6 +33,8 @@ public interface ExpenseMapper {
     @Mapping(source = "payer", target = "payedBy", qualifiedByName = "mapUserEntityToUserName")
     @Mapping(source = "event", target = "eventId", qualifiedByName = "mapEventEntityToEventDto")
     ExpenseDto toDto(Expense expense);
+
+    ExpenseDto toDto(ExpenseSubmissionDto expenseSubmissionDto);
 
     @Named("mapEventEntityToEventDto")
     default Integer toDto(Event event) {

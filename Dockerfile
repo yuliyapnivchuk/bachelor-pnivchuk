@@ -1,8 +1,9 @@
-FROM postgres:14.3
+FROM --platform=linux/amd64 postgres:14.3 as db
 
-# Set environment variables for PostgreSQL
-ENV POSTGRES_DB=itstep
-ENV POSTGRES_USER=itstep
-ENV POSTGRES_PASSWORD=itstep123
-# Postgres default port
-EXPOSE 5432
+FROM --platform=linux/amd64 openjdk:21-jdk-slim as app
+
+ARG JAR_FILE=build/libs/demo-0.0.1-SNAPSHOT.jar
+
+COPY ${JAR_FILE} application.jar
+
+ENTRYPOINT ["java", "-Xmx2048M", "-jar", "/application.jar"]

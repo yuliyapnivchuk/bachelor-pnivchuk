@@ -7,7 +7,9 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class EventDto {
+public class NoteDto {
     private Integer id;
-    private String name;
+    private Integer expenseId;
+    private String createdBy;
+    private String noteText;
 }

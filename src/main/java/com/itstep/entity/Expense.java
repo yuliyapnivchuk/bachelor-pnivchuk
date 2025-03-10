@@ -1,10 +1,7 @@
 package com.itstep.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,7 +12,9 @@ import java.util.List;
 @Table(name = "expense")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class Expense {
 
     @Id
@@ -49,9 +48,8 @@ public class Expense {
     @Column(name = "split_type")
     private String splitType;
 
-    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    private List<SplitExpense> splitDetails;
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SplitDetails> splitDetails = new ArrayList<>();
 
     @Column(name = "transaction_date")
     private LocalDate transactionDate;
@@ -65,7 +63,27 @@ public class Expense {
     @Column(name = "status")
     private String status;
 
-    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
+
+    @Column(name = "image")
+    private String image;
+
+    public void setSplitDetails(List<SplitDetails> splitDetails) {
+        if (splitDetails == null) {
+            this.splitDetails.clear();
+        } else {
+            splitDetails.forEach(i -> i.setExpense(this));
+            this.splitDetails = splitDetails;
+        }
+    }
+
+    public void setItems(List<Item> items) {
+        if (items == null) {
+            this.items.clear();
+        } else {
+            items.forEach(i -> i.setExpense(this));
+            this.items = items;
+        }
+    }
 }

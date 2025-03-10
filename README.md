@@ -11,13 +11,13 @@
 #### 1. Analyze receipt
 
 ```sh
-curl -v -X POST http://127.0.0.1:8080/receipt/analyze -F "file=@./src/test/resources/templates/test3.jpg"
+curl -v -X POST http://127.0.0.1:8080/receipt/scan -F "file=@./src/test/resources/templates/test3.jpg"
 ```
 
 #### 2. Create expense
 
 ```sh
-curl -X POST http://127.0.0.1:8080/expense/create \
+curl -X POST http://127.0.0.1:8080/expense \
      -H "Content-Type: application/json" \
      -d '{
   "id": null,
@@ -34,7 +34,7 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "splitType": "=",
       "splitDetails": [
         {
-          "user": "user2",
+          "userName": "user2",
           "value": null
         }
       ]
@@ -48,11 +48,11 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "splitType": "shares",
       "splitDetails": [
         {
-          "user": "user2",
+          "userName": "user2",
           "value": "1"
         },
         {
-          "user": "user1",
+          "userName": "user1",
           "value": "1"
         }
       ]
@@ -66,7 +66,7 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "splitType": "%",
       "splitDetails": [
         {
-          "user": "user3",
+          "userName": "user3",
           "value": "20"
         },
         {
@@ -84,11 +84,11 @@ curl -X POST http://127.0.0.1:8080/expense/create \
       "splitType": "manual",
       "splitDetails": [
         {
-          "user": "user1",
+          "userName": "user1",
           "value": 20
         },
         {
-          "user": "user2",
+          "userName": "user2",
           "value": 30
         }
       ]
@@ -103,6 +103,119 @@ curl -X POST http://127.0.0.1:8080/expense/create \
   "transactionTime": "15:03:00",
   "category": null,
   "status": null,
+  "createdBy": null
+}'
+```
+
+#### 3. Update expense
+
+```sh
+curl -X PUT http://127.0.0.1:8080/ \
+     -H "Content-Type: application/json" \
+     -d '{
+  "id": 1,
+  "eventId": 1,
+  "payedBy": "user3",
+  "summary": "Обід в ресторані 1",
+  "items": [
+    {
+      "id": 34,
+      "description": "Американо з молоком",
+      "price": 65,
+      "quantity": 3,
+      "totalPrice": 195,
+      "splitType": "=",
+      "splitDetails": [
+        {
+          "id": 57,
+          "userName": "user1",
+          "value": null
+        },
+        {
+          "userName": "user3",
+          "value": null
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "description": "Капучино",
+      "price": 85,
+      "quantity": 2,
+      "totalPrice": 170,
+      "splitType": "shares",
+      "splitDetails": [
+        {
+          "id": 58,
+          "userName": "user2",
+          "value": 2
+        },
+        {
+          "id": 59,
+          "userName": "user1",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "description": "Сік апельсиновий",
+      "price": 50,
+      "quantity": 1,
+      "totalPrice": 50,
+      "splitType": "manual",
+      "splitDetails": [
+        {
+          "userName": "user3",
+          "value": 30
+        },
+        {
+          "id": 63,
+          "userName": "user2",
+          "value": 20
+        }
+      ]
+    }
+  ],
+  "totalAmount": 705,
+  "subtotalAmount": 625,
+  "currency": "UAH",
+  "splitType": "byItem",
+  "splitDetails": [],
+  "transactionDate": null,
+  "transactionTime": "15:03:00",
+  "category": null,
+  "status": "DRAFT",
+  "createdBy": null
+}'
+```
+
+#### 4. Get expense
+
+```sh
+http://127.0.0.1:8080/expense?expenseId=1
+```
+
+#### 5. Submit expense
+
+```sh
+curl -X POST http://127.0.0.1:8080/expense/submit \
+     -H "Content-Type: application/json" \
+     -d '{
+  "id": 21,
+  "eventId": 1,
+  "payedBy": "user1",
+  "summary": "квитки в кіно",
+  "items": null,
+  "totalAmount": 1000,
+  "subtotalAmount": 950,
+  "currency": "UAH",
+  "splitType": "byItem",
+  "splitDetails": null,
+  "transactionDate": null,
+  "transactionTime": "15:03:00",
+  "category": null,
+  "status": "DRAFT",
   "createdBy": null
 }'
 ```

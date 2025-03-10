@@ -1,14 +1,15 @@
 package com.itstep.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class ItemDto {
     private Integer id;
     private String description;
@@ -16,7 +17,7 @@ public class ItemDto {
     private Double quantity;
     private Double totalPrice;
     private String splitType;
-    private List<SplitItemDto> splitDetails;
+    private List<SplitDetailsDto> splitDetails = new ArrayList<>();
 
     public static ItemDto createItem() {
         return new ItemDto();
