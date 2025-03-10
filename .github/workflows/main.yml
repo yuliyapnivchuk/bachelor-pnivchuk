@@ -34,8 +34,8 @@ jobs:
             
       - name: Build and push Docker images with docker compose
         run: |
-          docker-compose build
-          docker-compose push
+          docker compose -f docker-compose.yml build
+          docker compose -f docker-compose.yml push
           
       - name: Create db container
         uses: azure/cli@v2
