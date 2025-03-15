@@ -7,6 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
+@EqualsAndHashCode
 public class NoteDto {
     private Integer id;
     private Integer expenseId;

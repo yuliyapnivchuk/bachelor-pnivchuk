@@ -11,6 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
+@EqualsAndHashCode
 public class ExpenseDto {
     private Integer id;
     private Integer eventId;

@@ -37,7 +37,6 @@ public class ExpenseSubmissionDto {
     @NotNull(message = "Currency is required")
     private String currency;
 
-    @NotNull(message = "Split type is required")
     private String splitType;
 
     private List<SplitDetailsDto> splitDetails = new ArrayList<>();
