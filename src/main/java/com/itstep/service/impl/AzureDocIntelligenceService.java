@@ -66,7 +66,6 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
         if (isValidField(totalField) && CURRENCY == totalField.getType()) {
             expenseDto.setTotalAmount(totalField.getValueCurrency().getAmount());
             expenseDto.setCurrency(totalField.getValueCurrency().getCurrencyCode());
-
         }
 
         if (isValidField(transactionDateField) && DATE == transactionDateField.getType()) {
@@ -123,8 +122,8 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
                         itemDto.setTotalPrice(totalPrice);
                     }
                 }
-                expenseItems.add(itemDto);
             }
+            expenseItems.add(itemDto);
         }
         return expenseItems;
     }
