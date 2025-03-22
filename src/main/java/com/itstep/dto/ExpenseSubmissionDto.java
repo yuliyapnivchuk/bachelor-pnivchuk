@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @ToString
 @SplitDetailsConstraint
+@Builder
 public class ExpenseSubmissionDto {
 
     private Integer id;
