@@ -1,5 +1,6 @@
 package com.itstep.service;
 
+import com.itstep.exception.NonExistingSplitType;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
@@ -13,6 +14,6 @@ public enum SplitType {
         return Arrays.stream(SplitType.values())
                 .filter(item -> item.type.equals(type))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new NonExistingSplitType("Non existing split type"));
     }
 }

@@ -3,8 +3,7 @@ package com.itstep.service.impl;
 import com.itstep.dto.BalanceDto;
 import com.itstep.entity.Expense;
 import com.itstep.exception.ExpenseNotFound;
-import com.itstep.exception.NonExistingSplitType;
-import com.itstep.repository.ExpenseItemProjection;
+import com.itstep.entity.ExpenseItemProjection;
 import com.itstep.repository.ExpenseRepository;
 import com.itstep.service.BalanceService;
 import com.itstep.service.SplitType;
@@ -57,7 +56,6 @@ public class BalanceServiceImpl implements BalanceService {
                 case SHARES -> userIsOwedBalanceSplitByShares(itemShareComponents, userIsOwedBalance);
                 case PERCENTAGE -> userIsOwedBalanceSplitByPercentage(itemShareComponents, userIsOwedBalance);
                 case MANUAL -> userIsOwedBalanceSplitByExactAmounts(itemShareComponents, userIsOwedBalance);
-                default -> throw new NonExistingSplitType("Non existing split type");
             }
         }
 
@@ -93,7 +91,6 @@ public class BalanceServiceImpl implements BalanceService {
                 case SHARES -> userOwesBalanceSplitByShares(itemShareComponents, userOweItem.get(), userOweBalances);
                 case PERCENTAGE -> userOwesBalanceSplitByPercentage(userOweItem.get(), userOweBalances);
                 case MANUAL -> userOwesBalanceSplitByExactAmounts(userOweItem.get(), userOweBalances);
-                default -> throw new NonExistingSplitType("Non existing split type");
             }
         }
 

@@ -37,6 +37,7 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.6.3'
 	implementation group: 'com.microsoft.cognitiveservices.speech', name: 'client-sdk', version: "1.42.0", ext: "jar"
 	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'com.h2database:h2'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -2,11 +2,9 @@ package com.itstep;
 
 import com.itstep.dto.*;
 import com.itstep.entity.*;
+import com.itstep.service.SplitType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TestDataFactory {
     public static BalanceDto getBalanceDto() {
@@ -217,14 +215,14 @@ public class TestDataFactory {
                 .build();
 
         return Expense.builder()
-                .event(new Event(1, "event name"))
+                .event(Event.builder().name("event name").build())
                 .summary("Обід в ресторані")
                 .totalAmount(300.0)
                 .subtotalAmount(265.0)
                 .currency("UAH")
                 .splitType("byItem")
-                .createdBy(new User(1, "user1", "user1@gmail.com"))
-                .payer(new User(2, "user2", "user2@gmail.com"))
+                .createdBy(User.builder().name("user1").email("user1@gmail.com").build())
+                .payer(User.builder().name("user2").email("user2@gmail.com").build())
                 .items(List.of(item1, item2, item3, item4))
                 .build();
     }
@@ -243,5 +241,190 @@ public class TestDataFactory {
                 .createdBy(new User(1, "user1", "user1@gmail.com"))
                 .noteText("this is note text")
                 .build();
+    }
+
+    public static List<ExpenseItemProjection> getExpenseItemProjection() {
+        ExpenseItemProjection row1 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(1)
+                .payer("user1")
+                .totalPrice(550.0)
+                .splitType(SplitType.MANUAL.type)
+                .value(250.0)
+                .userName("user2")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row2 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(2)
+                .payer("user1")
+                .totalPrice(550.0)
+                .splitType(SplitType.MANUAL.type)
+                .value(200.0)
+                .userName("user3")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row3 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(3)
+                .payer("user2")
+                .totalPrice(1350.0)
+                .splitType(SplitType.PERCENTAGE.type)
+                .value(20.0)
+                .userName("user3")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row4 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(4)
+                .payer("user2")
+                .totalPrice(1350.0)
+                .splitType(SplitType.PERCENTAGE.type)
+                .value(80.0)
+                .userName("user4")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row5 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(5)
+                .payer("user3")
+                .totalPrice(50.0)
+                .splitType(SplitType.SHARES.type)
+                .value(2.0)
+                .userName("user1")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row6 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(6)
+                .payer("user3")
+                .totalPrice(50.0)
+                .splitType(SplitType.SHARES.type)
+                .value(1.0)
+                .userName("user2")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row7 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(7)
+                .payer("user4")
+                .totalPrice(250.0)
+                .splitType(SplitType.EQUAL.type)
+                .userName("user3")
+                .currency("USD")
+                .build();
+
+        ExpenseItemProjection row8 = ExpenseItemProjection.builder()
+                .expenseId(0)
+                .itemId(8)
+                .payer("user4")
+                .totalPrice(250.0)
+                .splitType(SplitType.EQUAL.type)
+                .userName("user1")
+                .currency("USD")
+                .build();
+
+        ExpenseItemProjection row9 = ExpenseItemProjection.builder()
+                .expenseId(1)
+                .payer("user1")
+                .totalPrice(550.0)
+                .splitType(SplitType.MANUAL.type)
+                .value(250.0)
+                .userName("user4")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row10 = ExpenseItemProjection.builder()
+                .expenseId(2)
+                .payer("user1")
+                .totalPrice(550.0)
+                .splitType(SplitType.MANUAL.type)
+                .value(200.0)
+                .userName("user2")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row11 = ExpenseItemProjection.builder()
+                .expenseId(3)
+                .payer("user2")
+                .totalPrice(1350.0)
+                .splitType(SplitType.PERCENTAGE.type)
+                .value(20.0)
+                .userName("user4")
+                .currency("USD")
+                .build();
+
+        ExpenseItemProjection row12 = ExpenseItemProjection.builder()
+                .expenseId(4)
+                .payer("user2")
+                .totalPrice(1350.0)
+                .splitType(SplitType.PERCENTAGE.type)
+                .value(80.0)
+                .userName("user1")
+                .currency("USD")
+                .build();
+
+        ExpenseItemProjection row13 = ExpenseItemProjection.builder()
+                .expenseId(5)
+                .payer("user2")
+                .totalPrice(50.0)
+                .splitType(SplitType.SHARES.type)
+                .value(2.0)
+                .userName("user1")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row14 = ExpenseItemProjection.builder()
+                .expenseId(6)
+                .payer("user2")
+                .totalPrice(50.0)
+                .splitType(SplitType.SHARES.type)
+                .value(1.0)
+                .userName("user2")
+                .currency("UAH")
+                .build();
+
+        ExpenseItemProjection row15 = ExpenseItemProjection.builder()
+                .expenseId(7)
+                .payer("user3")
+                .totalPrice(250.0)
+                .splitType(SplitType.EQUAL.type)
+                .userName("user2")
+                .currency("EUR")
+                .build();
+
+        ExpenseItemProjection row16 = ExpenseItemProjection.builder()
+                .expenseId(8)
+                .payer("user3")
+                .totalPrice(250.0)
+                .splitType(SplitType.EQUAL.type)
+                .userName("user1")
+                .currency("EUR")
+                .build();
+
+
+        return List.of(
+                row1,
+                row2,
+                row3,
+                row4,
+                row5,
+                row6,
+                row7,
+                row8,
+                row9,
+                row10,
+                row11,
+                row12,
+                row13,
+                row14,
+                row15,
+                row16);
     }
 }

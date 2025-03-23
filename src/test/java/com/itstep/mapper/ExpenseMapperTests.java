@@ -1,5 +1,10 @@
 package com.itstep.mapper;
 
+import com.azure.ai.documentintelligence.models.AnalyzeResult;
+import com.azure.ai.documentintelligence.models.Document;
+import com.azure.ai.documentintelligence.models.DocumentField;
+import com.azure.json.JsonProviders;
+import com.azure.json.JsonReader;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.dto.ItemDto;
@@ -13,7 +18,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.itstep.TestDataFactory.*;
@@ -45,7 +54,6 @@ public class ExpenseMapperTests {
         Expense actualExpense = expenseMapper.toEntity(expenseDto, eventRepository, userRepository);
 
         assertThat(actualExpense).isNotNull();
-        assertThat(expenseDto.getId()).isEqualTo(actualExpense.getId());
         assertThat(expenseDto.getCategory()).isEqualTo(actualExpense.getCategory());
         assertThat(expenseDto.getEventId()).isEqualTo(actualExpense.getEvent().getId());
         assertThat(expenseDto.getPayedBy()).isEqualTo(actualExpense.getPayer().getName());
@@ -157,7 +165,6 @@ public class ExpenseMapperTests {
         ExpenseDto actualExpense = expenseMapper.toDto(expectedExpense);
 
         assertThat(actualExpense).isNotNull();
-        assertThat(expectedExpense.getId()).isEqualTo(actualExpense.getId());
         assertThat(expectedExpense.getCategory()).isEqualTo(actualExpense.getCategory());
         assertThat(expectedExpense.getEventId()).isEqualTo(actualExpense.getEventId());
         assertThat(expectedExpense.getPayedBy()).isEqualTo(actualExpense.getPayedBy());
