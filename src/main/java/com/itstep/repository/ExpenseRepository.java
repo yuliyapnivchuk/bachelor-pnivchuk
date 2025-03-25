@@ -1,6 +1,7 @@
 package com.itstep.repository;
 
 import com.itstep.entity.Expense;
+import com.itstep.entity.ExpenseItemProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
