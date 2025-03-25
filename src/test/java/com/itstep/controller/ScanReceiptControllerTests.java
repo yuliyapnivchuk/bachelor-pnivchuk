@@ -11,6 +11,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.IOException;
+
 import static com.itstep.TestDataFactory.getExpenseDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,5 +60,31 @@ public class ScanReceiptControllerTests {
         assertThat(responseDto).isEqualTo(expenseDto);
 
         verify(scanReceiptService, times(1)).scanReceipt(any());
+    }
+
+    @Test
+    public void scanReceiptIOExceptionTest() throws Exception {
+        CustomMockMultipartFile mockFile = new CustomMockMultipartFile(
+                "file",
+                "test-image.jpg",
+                IMAGE_JPEG_VALUE,
+                "some fake content".getBytes()
+        );
+
+        mockMvc.perform(multipart("/receipt/scan")
+                        .file(mockFile)
+                        .contentType(MULTIPART_FORM_DATA))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static class CustomMockMultipartFile extends MockMultipartFile {
+        public CustomMockMultipartFile(String name, String originalFilename, String contentType, byte[] content) {
+            super(name, originalFilename, contentType, content);
+        }
+
+        @Override
+        public byte[] getBytes() throws IOException {
+            throw new IOException();
+        }
     }
 }

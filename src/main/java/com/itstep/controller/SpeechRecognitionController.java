@@ -2,12 +2,13 @@ package com.itstep.controller;
 
 import com.itstep.service.SpeechRecognitionService;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +20,15 @@ public class SpeechRecognitionController {
 
     @PostMapping("/toText")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @SneakyThrows
     public Map<String, String> convertSpeechToText(@RequestParam("file") MultipartFile file) {
-        File tempFile = File.createTempFile("uploaded-", ".wav");
-        file.transferTo(tempFile);
+        File tempFile;
+
+        try {
+            tempFile = File.createTempFile("uploaded-", ".wav");
+            file.transferTo(tempFile);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to transfer uploaded audio to temp file ", e);
+        }
 
         String text = speechRecognitionService.convertSpeechToText(tempFile.getAbsolutePath());
 

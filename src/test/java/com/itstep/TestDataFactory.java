@@ -4,6 +4,7 @@ import com.itstep.dto.*;
 import com.itstep.entity.*;
 import com.itstep.service.SplitType;
 
+import java.time.LocalTime;
 import java.util.*;
 
 public class TestDataFactory {
@@ -85,6 +86,7 @@ public class TestDataFactory {
                 .splitType("byItem")
                 .createdBy("user1")
                 .payedBy("user2")
+                .transactionTime("15:03:00")
                 .items(new ArrayList<>(List.of(item1, item2, item3, item4)))
                 .build();
 
@@ -154,6 +156,7 @@ public class TestDataFactory {
                 .splitType("byItem")
                 .createdBy("user1")
                 .payedBy("user2")
+                .transactionTime("15:03:00")
                 .items(new ArrayList<>(List.of(item1, item2, item3, item4)))
                 .build();
 
@@ -168,7 +171,9 @@ public class TestDataFactory {
                 .totalPrice(195.0)
                 .splitType("=")
                 .splitDetails(
-                        List.of(SplitDetails.builder().userName("user2").build())
+                        new ArrayList<>(
+                                List.of(SplitDetails.builder().userName("user2").build())
+                        )
                 )
                 .build();
 
@@ -179,10 +184,10 @@ public class TestDataFactory {
                 .totalPrice(170.0)
                 .splitType("shares")
                 .splitDetails(
-                        List.of(
+                        new ArrayList<>(List.of(
                                 SplitDetails.builder().userName("user2").value(2.0).build(),
                                 SplitDetails.builder().userName("user1").value(1.0).build()
-                        )
+                        ))
                 )
                 .build();
 
@@ -193,10 +198,10 @@ public class TestDataFactory {
                 .totalPrice(210.0)
                 .splitType("%")
                 .splitDetails(
-                        List.of(
+                        new ArrayList<>(List.of(
                                 SplitDetails.builder().userName("user2").value(30.0).build(),
                                 SplitDetails.builder().userName("user1").value(70.0).build()
-                        )
+                        ))
                 )
                 .build();
 
@@ -207,10 +212,10 @@ public class TestDataFactory {
                 .totalPrice(50.0)
                 .splitType("manual")
                 .splitDetails(
-                        List.of(
+                        new ArrayList<>(List.of(
                                 SplitDetails.builder().userName("user2").value(20.0).build(),
                                 SplitDetails.builder().userName("user1").value(30.0).build()
-                        )
+                        ))
                 )
                 .build();
 
@@ -221,9 +226,10 @@ public class TestDataFactory {
                 .subtotalAmount(265.0)
                 .currency("UAH")
                 .splitType("byItem")
+                .transactionTime(LocalTime.of(15, 3, 0))
                 .createdBy(User.builder().name("user1").email("user1@gmail.com").build())
                 .payer(User.builder().name("user2").email("user2@gmail.com").build())
-                .items(List.of(item1, item2, item3, item4))
+                .items(new ArrayList<>(List.of(item1, item2, item3, item4)))
                 .build();
     }
 
@@ -332,11 +338,11 @@ public class TestDataFactory {
 
         ExpenseItemProjection row9 = ExpenseItemProjection.builder()
                 .expenseId(1)
-                .payer("user1")
+                .payer("user2")
                 .totalPrice(550.0)
                 .splitType(SplitType.MANUAL.type)
                 .value(250.0)
-                .userName("user4")
+                .userName("user1")
                 .currency("UAH")
                 .build();
 

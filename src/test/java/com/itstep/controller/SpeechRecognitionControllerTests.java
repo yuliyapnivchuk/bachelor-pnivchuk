@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstep.service.SpeechRecognitionService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -12,6 +14,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,5 +66,25 @@ public class SpeechRecognitionControllerTests {
         assertThat(responseMap).isEqualTo(expectedResultMap);
 
         verify(speechRecognitionService, times(1)).convertSpeechToText(any());
+    }
+
+    @Test
+    public void convertSpeechToTextIOExceptionTest() {
+        MockMultipartFile audioFile = new MockMultipartFile(
+                "file",
+                "test-audio.wav",
+                String.valueOf(MediaType.valueOf("audio/wav")),
+                "dummy audio content".getBytes()
+        );
+
+        try (MockedStatic<File> mockedFile = mockStatic(File.class)) {
+            mockedFile.when(() -> File.createTempFile("uploaded-", ".wav")).thenThrow(new IOException());
+
+            mockMvc.perform(multipart("/speech/toText")
+                    .file(audioFile)
+                    .contentType(MULTIPART_FORM_DATA)).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

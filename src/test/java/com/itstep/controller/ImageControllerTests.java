@@ -8,6 +8,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
@@ -44,10 +46,36 @@ public class ImageControllerTests {
     }
 
     @Test
+    public void saveImageIOExceptionTest() throws Exception {
+        CustomMockMultipartFile mockFile = new CustomMockMultipartFile(
+                "file",
+                "test-image.jpg",
+                IMAGE_JPEG_VALUE,
+                "some fake content".getBytes()
+        );
+
+        mockMvc.perform(multipart("/image/{expenseId}", 1)
+                        .file(mockFile)
+                        .contentType(MULTIPART_FORM_DATA))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void deleteImageTest() throws Exception {
         doNothing().when(imageService).delete(any());
 
         mockMvc.perform(delete("/image/{expenseId}", 1))
                 .andExpect(status().isAccepted());
+    }
+
+    private static class CustomMockMultipartFile extends MockMultipartFile {
+        public CustomMockMultipartFile(String name, String originalFilename, String contentType, byte[] content) {
+            super(name, originalFilename, contentType, content);
+        }
+
+        @Override
+        public byte[] getBytes() throws IOException {
+            throw new IOException();
+        }
     }
 }

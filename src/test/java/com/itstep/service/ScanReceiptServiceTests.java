@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -40,9 +40,10 @@ public class ScanReceiptServiceTests {
     AzureDocIntelligenceService azureDocIntelligenceService;
 
     @Test
-    void scanReceiptTest() throws IOException {
+    void scanReceiptTest() {
         byte[] image = "test-image".getBytes();
-        AnalyzeResult mockAnalyzeResult = mockAnalyzeResult();
+        Path path = Paths.get("src/test/resources/DocumentIntelligenceResponse.json");
+        AnalyzeResult mockAnalyzeResult = mockAnalyzeResult(path);
 
         when(poller.getFinalResult()).thenReturn(mockAnalyzeResult);
         when(client.beginAnalyzeDocument(anyString(), any(), any(), any(), any(), any(), any(), any(), any()))
@@ -72,9 +73,38 @@ public class ScanReceiptServiceTests {
         verify(poller, times(1)).getFinalResult();
     }
 
-    private AnalyzeResult mockAnalyzeResult() throws IOException {
-        Path path = Paths.get("src/test/resources/DocumentIntelligenceResponse.json");
-        String json = new String(Files.readAllBytes(path));
-        return AnalyzeResult.fromJson(JsonProviders.createReader(json));
+    @Test
+    void scanReceiptNegativeScenariosTest() {
+        byte[] image = "test-image".getBytes();
+        Path path = Paths.get("src/test/resources/DocumentIntelligenceResponseNegativeScenarios.json");
+        AnalyzeResult mockAnalyzeResult = mockAnalyzeResult(path);
+
+        when(poller.getFinalResult()).thenReturn(mockAnalyzeResult);
+        when(client.beginAnalyzeDocument(anyString(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(poller);
+
+        ExpenseDto actualExpenseDto = azureDocIntelligenceService.scanReceipt(image);
+
+        assertNotNull(actualExpenseDto);
+        assertThat(actualExpenseDto.getTotalAmount()).isNull();
+        assertThat(actualExpenseDto.getSubtotalAmount()).isNull();
+        assertThat(actualExpenseDto.getCurrency()).isNull();
+        assertThat(actualExpenseDto.getTransactionTime()).isNull();
+        assertTrue(actualExpenseDto.getItems().isEmpty());
+
+        verify(client, times(1)).beginAnalyzeDocument(anyString(), any(), any(), any(), any(), any(), any(), any(), any());  // Ensure client was called
+        verify(poller, times(1)).getFinalResult();
+    }
+
+    private AnalyzeResult mockAnalyzeResult(Path path) {
+        AnalyzeResult analyzeResult = null;
+        try {
+            String json = new String(Files.readAllBytes(path));
+            analyzeResult = AnalyzeResult.fromJson(JsonProviders.createReader(json));
+
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        return analyzeResult;
     }
 }

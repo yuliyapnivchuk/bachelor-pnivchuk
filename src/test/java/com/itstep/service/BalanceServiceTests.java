@@ -1,6 +1,7 @@
 package com.itstep.service;
 
 import com.itstep.dto.BalanceDto;
+import com.itstep.entity.Expense;
 import com.itstep.entity.ExpenseItemProjection;
 import com.itstep.exception.ExpenseNotFound;
 import com.itstep.exception.NonExistingSplitType;
@@ -44,16 +45,16 @@ public class BalanceServiceTests {
         BalanceDto result = balanceService.getBalance("user1");
 
         assertThat(result).isNotNull();
-        assertThat(result.getTotalBalance().get("UAH")).isEqualTo(2162.5);
+        assertThat(result.getTotalBalance().get("UAH")).isEqualTo(1627.5);
         assertThat(result.getTotalBalance().get("USD")).isEqualTo(-810.0);
         assertThat(result.getUserOwesTotal().get("EUR")).isEqualTo(250.0);
         assertThat(result.getUserOwesTotal().get("USD")).isEqualTo(1330.0);
-        assertThat(result.getUserOwesTotal().get("UAH")).isEqualTo(388.75);
+        assertThat(result.getUserOwesTotal().get("UAH")).isEqualTo(638.75);
         assertThat(result.getUserIsOwedTotal().get("EUR")).isEqualTo(250.0);
         assertThat(result.getUserIsOwedTotal().get("USD")).isEqualTo(520.0);
-        assertThat(result.getUserIsOwedTotal().get("UAH")).isEqualTo(2551.25);
+        assertThat(result.getUserIsOwedTotal().get("UAH")).isEqualTo(2266.25);
         assertThat(result.getUserOwes().get("user2").get("USD")).isEqualTo(1080.0);
-        assertThat(result.getUserOwes().get("user2").get("UAH")).isEqualTo(338.75);
+        assertThat(result.getUserOwes().get("user2").get("UAH")).isEqualTo(588.75);
         assertThat(result.getUserOwes().get("user3").get("EUR")).isEqualTo(250.0);
         assertThat(result.getUserOwes().get("user3").get("UAH")).isEqualTo(50.0);
         assertThat(result.getUserOwes().get("user4").get("USD")).isEqualTo(250.0);
@@ -62,7 +63,34 @@ public class BalanceServiceTests {
         assertThat(result.getUserIsOwed().get("user3").get("USD")).isEqualTo(250.0);
         assertThat(result.getUserIsOwed().get("user3").get("UAH")).isEqualTo(478.75);
         assertThat(result.getUserIsOwed().get("user4").get("USD")).isEqualTo(270.0);
-        assertThat(result.getUserIsOwed().get("user4").get("UAH")).isEqualTo(1408.75);
+        assertThat(result.getUserIsOwed().get("user4").get("UAH")).isEqualTo(1123.75);
+    }
+
+    @Test
+    void getBalanceWhenFeeAndTaxIsZeroTest() {
+        List<ExpenseItemProjection> expenseItemProjectionList = getExpenseItemProjection();
+        Expense expense = new Expense();
+        expense.setTotalAmount(10.0);
+        expense.setSubtotalAmount(10.0);
+
+        when(expenseRepository.findUserIsOwedItems(anyString())).thenReturn(expenseItemProjectionList);
+        when(expenseRepository.findUserOweItems(anyString())).thenReturn(expenseItemProjectionList);
+        when(expenseRepository.findById(any())).thenReturn(Optional.of(expense));
+
+        BalanceDto result = balanceService.getBalance("user1");
+
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void getBalanceWhenExpenseNotFoundTest() {
+        List<ExpenseItemProjection> expenseItemProjectionList = getExpenseItemProjection();
+
+        when(expenseRepository.findUserIsOwedItems(anyString())).thenReturn(expenseItemProjectionList);
+        when(expenseRepository.findUserOweItems(anyString())).thenReturn(expenseItemProjectionList);
+        when(expenseRepository.findById(any())).thenReturn(Optional.ofNullable(null));
+
+        assertThrows(ExpenseNotFound.class, () -> balanceService.getBalance("user1"));
     }
 
     @Test
@@ -78,7 +106,7 @@ public class BalanceServiceTests {
     }
 
     @Test
-    void getBalanceExpenseWithSuchIdNotFoundExceptionTest() {
+    void userIsOwedBalanceSplitFeeAndTaxExpenseNotFoundExceptionTest() {
         List<ExpenseItemProjection> expenseItemProjectionList = getExpenseItemProjection();
 
         when(expenseRepository.findUserIsOwedItems(anyString())).thenReturn(expenseItemProjectionList);

@@ -7,7 +7,6 @@ import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ItemDto;
 import com.itstep.service.ScanReceiptService;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.Map;
 
 import static com.azure.ai.documentintelligence.models.DocumentFieldType.*;
 import static com.itstep.dto.ItemDto.createItem;
-import static com.itstep.util.StringUtil.deleteSpecChars;
 
 @Service
 @AllArgsConstructor
@@ -31,7 +29,6 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
         return parseResult(result);
     }
 
-    @SneakyThrows
     private AnalyzeResult callService(byte[] image) {
 
         SyncPoller<AnalyzeResultOperation, AnalyzeResult> poller = client.beginAnalyzeDocument(
@@ -76,7 +73,7 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
             expenseDto.setTransactionTime(transactionTimeField.getValueTime());
         }
 
-        if (invoiceItemsField == null) {
+        if (invoiceItemsField.getValueArray().isEmpty()) {
             return expenseDto;
         }
 
@@ -130,5 +127,10 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
 
     private boolean isValidField(DocumentField field) {
         return field != null && field.getConfidence() >= CONFIDENCE_LEVEL_THRESHOLD;
+    }
+
+    private String deleteSpecChars(String str) {
+        return str.replaceAll("\n", " ")
+                .replaceAll("[^\\p{L} ]", "");
     }
 }

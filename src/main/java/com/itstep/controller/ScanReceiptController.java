@@ -3,10 +3,12 @@ package com.itstep.controller;
 import com.itstep.service.ScanReceiptService;
 import com.itstep.dto.ExpenseDto;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
 
 @AllArgsConstructor
 @RestController
@@ -16,8 +18,11 @@ public class ScanReceiptController {
 
     @PostMapping("/scan")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @SneakyThrows
     public ExpenseDto scanReceipt(@RequestParam("file") MultipartFile image) {
-        return service.scanReceipt(image.getBytes());
+        try {
+            return service.scanReceipt(image.getBytes());
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to read image", e);
+        }
     }
 }
