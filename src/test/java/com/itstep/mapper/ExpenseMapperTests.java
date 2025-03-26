@@ -140,7 +140,7 @@ public class ExpenseMapperTests {
             assertThat(expectedItems.get(1).getSplitType()).isEqualTo(actualItems.get(1).getSplitType());
 
             for (Item tmpItem : actualExpense.getItems()){
-                assertThat(tmpItem.getSplitDetails()).isNull();
+                assertTrue(tmpItem.getSplitDetails().isEmpty());
             }
         }
     }
@@ -169,7 +169,7 @@ public class ExpenseMapperTests {
         assertThat(expenseDto.getTransactionDate()).isEqualTo(actualExpense.getTransactionDate());
         assertThat(expenseDto.getStatus()).isEqualTo(actualExpense.getStatus());
         assertThat(expenseDto.getImage()).isEqualTo(actualExpense.getImage());
-        assertThat(actualExpense.getItems()).isNull();
+        assertTrue(actualExpense.getItems().isEmpty());
     }
 
     @Test

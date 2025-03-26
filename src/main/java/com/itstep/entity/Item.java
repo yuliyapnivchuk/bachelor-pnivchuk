@@ -11,11 +11,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "item")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
-@Builder
 public class Item {
 
     @Transient
@@ -45,6 +43,18 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SplitDetails> splitDetails = new ArrayList<>();
+
+    @Builder
+    public Item(Integer id, Expense expense, String description, Double price, Double quantity, Double totalPrice, String splitType, List<SplitDetails> splitDetails) {
+        this.id = id;
+        this.expense = expense;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.splitType = splitType;
+        setSplitDetails(splitDetails);
+    }
 
     public void setSplitDetails(List<SplitDetails> splitDetails) {
         if (splitDetails == null) {

@@ -30,6 +30,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 expense e ON e.id = i.expense_id
             WHERE
                 e.payer = :payer
+            AND
+                e.status = 'SUBMITTED'
             UNION
             SELECT
                 e.id,
@@ -45,6 +47,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 split_details s on s.expense_id = e.id
             WHERE
                 e.payer = :payer
+            AND
+                e.status = 'SUBMITTED'
              """, nativeQuery = true)
     List<ExpenseItemProjection> findUserIsOwedItems(@Param("payer") String payer);
 
@@ -66,6 +70,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 expense e ON e.id = i.expense_id
             WHERE
                 e.payer != :payer
+            AND
+                e.status = 'SUBMITTED'
             UNION
             SELECT
                 e.id,
@@ -82,6 +88,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 split_details s on s.expense_id = e.id
             WHERE
                 e.payer != :payer
+            AND
+                e.status = 'SUBMITTED'
             """, nativeQuery = true)
     List<ExpenseItemProjection> findUserOweItems(@Param("payer") String payer);
 
