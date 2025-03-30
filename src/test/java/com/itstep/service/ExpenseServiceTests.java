@@ -1,7 +1,6 @@
 package com.itstep.service;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.entity.Expense;
 import com.itstep.exception.ExpenseNotFound;
 import com.itstep.mapper.ExpenseMapper;
@@ -80,7 +79,7 @@ public class ExpenseServiceTests {
         when(expenseMapper.toEntity(any(), any(), any())).thenReturn(expense);
         when(expenseRepository.save(any())).thenReturn(expense);
 
-        ExpenseDto actualExpense = expenseService.submitExpense(new ExpenseSubmissionDto());
+        ExpenseDto actualExpense = expenseService.submitExpense(new ExpenseDto());
 
         assertThat(actualExpense).isNotNull();
         assertThat(expenseMapper.toDto(expense)).isEqualTo(actualExpense);

@@ -1,6 +1,6 @@
 package com.itstep.validation;
 
-import com.itstep.dto.ExpenseSubmissionDto;
+import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ItemDto;
 import com.itstep.dto.SplitDetailsDto;
 import com.itstep.exception.NonExistingSplitType;
@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsConstraint, ExpenseSubmissionDto> {
+public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsConstraint, ExpenseDto> {
 
     @Override
-    public boolean isValid(ExpenseSubmissionDto expenseSubmissionDto, ConstraintValidatorContext context) {
+    public boolean isValid(ExpenseDto expenseDto, ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
 
-        if (!validateSplitTypeNotNull(expenseSubmissionDto.getSplitType(), context)) {
+        if (!validateSplitTypeNotNull(expenseDto.getSplitType(), context)) {
             return false;
         }
 
-        SplitType SPLIT_TYPE = SplitType.get(expenseSubmissionDto.getSplitType());
-        List<SplitDetailsDto> splitDetails = expenseSubmissionDto.getSplitDetails();
+        SplitType SPLIT_TYPE = SplitType.get(expenseDto.getSplitType());
+        List<SplitDetailsDto> splitDetails = expenseDto.getSplitDetails();
 
         List<Boolean> isValid = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
                 isValid.add(validateValueNotNull(SPLIT_TYPE, splitDetails, context));
                 break;
             case BY_ITEM:
-                isValid.add(validateByItem(expenseSubmissionDto, context));
+                isValid.add(validateByItem(expenseDto, context));
                 break;
         }
         return isValid.stream().allMatch(i -> i);
@@ -124,8 +124,8 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
         return true;
     }
 
-    private boolean validateByItem(ExpenseSubmissionDto expenseSubmissionDto, ConstraintValidatorContext context) {
-        List<ItemDto> items = expenseSubmissionDto.getItems();
+    private boolean validateByItem(ExpenseDto expenseDto, ConstraintValidatorContext context) {
+        List<ItemDto> items = expenseDto.getItems();
 
         if (!validateItemsNotNull(items, context)) {
             return false;
@@ -134,7 +134,7 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
         List<Boolean> isValid = new ArrayList<>();
 
         for (ItemDto item : items) {
-            validateItemTotalPriceNotNull(item, context);
+            isValid.add(validateItemTotalPriceNotNull(item, context));
 
             SplitType SPLIT_TYPE = SplitType.get(item.getSplitType());
             List<SplitDetailsDto> splitDetails = item.getSplitDetails();

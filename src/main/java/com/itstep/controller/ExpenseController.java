@@ -1,7 +1,6 @@
 package com.itstep.controller;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.service.ExpenseService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -35,7 +34,7 @@ public class ExpenseController {
 
     @PostMapping("/submit")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ExpenseDto submitExpense(@Valid @RequestBody ExpenseSubmissionDto expenseDto) {
+    public ExpenseDto submitExpense(@Valid @RequestBody ExpenseDto expenseDto) {
         return expenseService.submitExpense(expenseDto);
     }
 }

@@ -1,7 +1,6 @@
 package com.itstep.service.impl;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.entity.*;
 import com.itstep.exception.ExpenseNotFound;
 import com.itstep.mapper.ExpenseMapper;
@@ -43,8 +42,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseMapper.toDto(savedExpense);
     }
 
-    public ExpenseDto submitExpense(ExpenseSubmissionDto expenseSubmissionDto) {
-        ExpenseDto expenseDto = expenseMapper.toDto(expenseSubmissionDto);
+    public ExpenseDto submitExpense(ExpenseDto expenseDto) {
         expenseDto.setStatus(SUBMITTED.status);
         return updateExpense(expenseDto);
     }

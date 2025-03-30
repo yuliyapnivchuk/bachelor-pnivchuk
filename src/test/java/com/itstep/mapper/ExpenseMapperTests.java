@@ -1,7 +1,6 @@
 package com.itstep.mapper;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.dto.ItemDto;
 import com.itstep.dto.SplitDetailsDto;
 import com.itstep.entity.*;
@@ -306,84 +305,7 @@ public class ExpenseMapperTests {
 
     @Test
     void toDtoWhenExpenseIsNullTest() {
-        ExpenseDto actualExpense = expenseMapper.toDto((Expense) null);
-        assertThat(actualExpense).isNull();
-    }
-
-    @Test
-    void expenseDtoToExpenseSubmissionDtoTest() {
-        ExpenseSubmissionDto expectedExpense = getExpenseSubmissionDto();
-        expectedExpense.setSplitDetails(List.of(SplitDetailsDto.builder().userName("user2").build()));
-        ExpenseDto actualExpense = expenseMapper.toDto(expectedExpense);
-
-        assertThat(actualExpense).isNotNull();
-        assertThat(expectedExpense.getCategory()).isEqualTo(actualExpense.getCategory());
-        assertThat(expectedExpense.getEventId()).isEqualTo(actualExpense.getEventId());
-        assertThat(expectedExpense.getPayedBy()).isEqualTo(actualExpense.getPayedBy());
-        assertThat(expectedExpense.getCreatedBy()).isEqualTo(actualExpense.getCreatedBy());
-        assertThat(expectedExpense.getSummary()).isEqualTo(actualExpense.getSummary());
-        assertThat(expectedExpense.getTotalAmount()).isEqualTo(actualExpense.getTotalAmount());
-        assertThat(expectedExpense.getSubtotalAmount()).isEqualTo(actualExpense.getSubtotalAmount());
-        assertThat(expectedExpense.getCurrency()).isEqualTo(actualExpense.getCurrency());
-        assertThat(expectedExpense.getSplitType()).isEqualTo(actualExpense.getSplitType());
-        assertThat(expectedExpense.getTransactionDate()).isEqualTo(actualExpense.getTransactionDate());
-        assertThat(expectedExpense.getStatus()).isEqualTo(actualExpense.getStatus());
-        assertThat(expectedExpense.getImage()).isEqualTo(actualExpense.getImage());
-
-        assertThat(expectedExpense.getItems()).containsExactlyInAnyOrderElementsOf(actualExpense.getItems());
-    }
-
-    @Test
-    void expenseDtoToExpenseSubmissionDtoWhenSplitDetailsIsNullTest() {
-        ExpenseSubmissionDto expectedExpense = getExpenseSubmissionDto();
-        expectedExpense.setSplitDetails(null);
-        expectedExpense.getItems().forEach(item -> item.setSplitDetails(null));
-        ExpenseDto actualExpense = expenseMapper.toDto(expectedExpense);
-
-        assertThat(actualExpense).isNotNull();
-        assertThat(expectedExpense.getCategory()).isEqualTo(actualExpense.getCategory());
-        assertThat(expectedExpense.getEventId()).isEqualTo(actualExpense.getEventId());
-        assertThat(expectedExpense.getPayedBy()).isEqualTo(actualExpense.getPayedBy());
-        assertThat(expectedExpense.getCreatedBy()).isEqualTo(actualExpense.getCreatedBy());
-        assertThat(expectedExpense.getSummary()).isEqualTo(actualExpense.getSummary());
-        assertThat(expectedExpense.getTotalAmount()).isEqualTo(actualExpense.getTotalAmount());
-        assertThat(expectedExpense.getSubtotalAmount()).isEqualTo(actualExpense.getSubtotalAmount());
-        assertThat(expectedExpense.getCurrency()).isEqualTo(actualExpense.getCurrency());
-        assertThat(expectedExpense.getSplitType()).isEqualTo(actualExpense.getSplitType());
-        assertThat(expectedExpense.getTransactionDate()).isEqualTo(actualExpense.getTransactionDate());
-        assertThat(expectedExpense.getStatus()).isEqualTo(actualExpense.getStatus());
-        assertThat(expectedExpense.getImage()).isEqualTo(actualExpense.getImage());
-        assertThat(expectedExpense.getSplitDetails()).isNull();
-
-        assertThat(expectedExpense.getItems()).containsExactlyInAnyOrderElementsOf(actualExpense.getItems());
-    }
-
-    @Test
-    void expenseDtoToExpenseSubmissionDtoWhenItemsIsNullTest() {
-        ExpenseSubmissionDto expectedExpense = getExpenseSubmissionDto();
-        expectedExpense.setItems(null);
-        ExpenseDto actualExpense = expenseMapper.toDto(expectedExpense);
-
-        assertThat(actualExpense).isNotNull();
-        assertThat(expectedExpense.getCategory()).isEqualTo(actualExpense.getCategory());
-        assertThat(expectedExpense.getEventId()).isEqualTo(actualExpense.getEventId());
-        assertThat(expectedExpense.getPayedBy()).isEqualTo(actualExpense.getPayedBy());
-        assertThat(expectedExpense.getCreatedBy()).isEqualTo(actualExpense.getCreatedBy());
-        assertThat(expectedExpense.getSummary()).isEqualTo(actualExpense.getSummary());
-        assertThat(expectedExpense.getTotalAmount()).isEqualTo(actualExpense.getTotalAmount());
-        assertThat(expectedExpense.getSubtotalAmount()).isEqualTo(actualExpense.getSubtotalAmount());
-        assertThat(expectedExpense.getCurrency()).isEqualTo(actualExpense.getCurrency());
-        assertThat(expectedExpense.getSplitType()).isEqualTo(actualExpense.getSplitType());
-        assertThat(expectedExpense.getTransactionDate()).isEqualTo(actualExpense.getTransactionDate());
-        assertThat(expectedExpense.getStatus()).isEqualTo(actualExpense.getStatus());
-        assertThat(expectedExpense.getImage()).isEqualTo(actualExpense.getImage());
-
-        assertThat(expectedExpense.getItems()).isNull();
-    }
-
-    @Test
-    void expenseDtoToExpenseSubmissionDtoWhichIsNullTest() {
-        ExpenseDto actualExpense = expenseMapper.toDto((ExpenseSubmissionDto) null);
+        ExpenseDto actualExpense = expenseMapper.toDto(null);
         assertThat(actualExpense).isNull();
     }
 }

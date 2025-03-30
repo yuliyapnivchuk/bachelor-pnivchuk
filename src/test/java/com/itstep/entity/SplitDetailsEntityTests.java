@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SplitDetailsTests {
+public class SplitDetailsEntityTests {
 
     @Test
     void equalsTest() {
@@ -20,6 +20,6 @@ public class SplitDetailsTests {
         SplitDetails o1 = SplitDetails.builder().id(1).userName("user2").value(20.0).build();
         assertEquals(o1.hashCode(), Integer.valueOf(1).hashCode());
         o1.setId(null);
-        assertNotNull(o1.hashCode());
+        assertNotEquals(0, o1.hashCode());
     }
 }

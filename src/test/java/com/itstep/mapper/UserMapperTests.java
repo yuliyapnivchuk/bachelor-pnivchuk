@@ -10,6 +10,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -29,5 +30,10 @@ public class UserMapperTests {
         when(userRepository.findByName(anyString())).thenReturn(Optional.ofNullable(null));
 
         assertThrows(UserNotFound.class, () -> userMapper.mapUserNameToUserEntity("user1", userRepository));
+    }
+
+    @Test
+    void mapUserNameToUserEntityWhenUserNameIsNullTest() {
+        assertThat(userMapper.mapUserNameToUserEntity(null, userRepository)).isNull();
     }
 }
