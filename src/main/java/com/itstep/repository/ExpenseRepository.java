@@ -97,4 +97,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
     @Transactional
     @Query(value = "UPDATE expense SET image = :image WHERE id = :id", nativeQuery = true)
     void updateImageName(@Param("image") String name, @Param("id") Integer id);
+
+    List<Expense> findByEventId(Integer eventId);
 }

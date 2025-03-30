@@ -9,6 +9,8 @@ import com.itstep.service.NoteService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class NoteServiceImpl implements NoteService {
@@ -20,5 +22,14 @@ public class NoteServiceImpl implements NoteService {
         Note note = noteMapper.toEntity(noteDto, userRepository);
         Note savedNote = noteRepository.save(note);
         return noteMapper.toDto(savedNote);
+    }
+
+    public List<NoteDto> getAllNotes(Integer expenseId) {
+        List<Note> expenseList = noteRepository.findByExpenseId(expenseId);
+        return expenseList.stream().map(i -> noteMapper.toDto(i)).toList();
+    }
+
+    public void deleteNote(Integer id) {
+        noteRepository.deleteById(id);
     }
 }

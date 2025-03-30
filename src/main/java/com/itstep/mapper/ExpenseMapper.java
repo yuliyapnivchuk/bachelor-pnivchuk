@@ -18,6 +18,6 @@ public interface ExpenseMapper {
 
     @Mapping(source = "createdBy", target = "createdBy", qualifiedByName = "mapUserEntityToUserName")
     @Mapping(source = "payer", target = "payedBy", qualifiedByName = "mapUserEntityToUserName")
-    @Mapping(source = "event", target = "eventId", qualifiedByName = "mapEventEntityToEventDto")
+    @Mapping(source = "event", target = "eventId", qualifiedByName = "mapEventEntityToEventId")
     ExpenseDto toDto(Expense expense);
 }

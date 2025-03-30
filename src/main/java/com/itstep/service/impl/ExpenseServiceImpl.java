@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.itstep.entity.ExpenseStatus.DRAFT;
 import static com.itstep.entity.ExpenseStatus.SUBMITTED;
 import static com.itstep.exception.ConstantsUtility.EXPENSE_WITH_SUCH_ID_NOT_FOUND;
@@ -36,6 +38,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseMapper.toDto(expense);
     }
 
+    public List<ExpenseDto> getAllExpenses(Integer eventId) {
+        List<Expense> expenseList = expenseRepository.findByEventId(eventId);
+        return expenseList.stream().map(i -> expenseMapper.toDto(i)).toList();
+    }
+
     public ExpenseDto updateExpense(ExpenseDto expenseDto) {
         Expense expense = expenseMapper.toEntity(expenseDto, eventRepository, userRepository);
         Expense savedExpense = expenseRepository.save(expense);
@@ -45,5 +52,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ExpenseDto submitExpense(ExpenseDto expenseDto) {
         expenseDto.setStatus(SUBMITTED.status);
         return updateExpense(expenseDto);
+    }
+
+    public void delete(Integer id) {
+        expenseRepository.deleteById(id);
     }
 }
