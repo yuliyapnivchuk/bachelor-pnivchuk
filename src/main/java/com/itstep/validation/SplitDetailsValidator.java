@@ -3,7 +3,6 @@ package com.itstep.validation;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ItemDto;
 import com.itstep.dto.SplitDetailsDto;
-import com.itstep.exception.NonExistingSplitType;
 import com.itstep.service.SplitType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -156,8 +155,6 @@ public class SplitDetailsValidator implements ConstraintValidator<SplitDetailsCo
                     isValid.add(validateUserNotNull(SPLIT_TYPE, splitDetails, context));
                     isValid.add(validateValueNotNull(SPLIT_TYPE, splitDetails, context));
                     break;
-                default:
-                    throw new NonExistingSplitType("Non existing split type");
             }
         }
 

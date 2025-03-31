@@ -35,6 +35,7 @@ public class ImageController {
     }
 
     @GetMapping("{expenseId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<byte[]> getImage(@PathVariable Integer expenseId) {
         try {
             byte[] imageBytes = imageService.getImage(expenseId);

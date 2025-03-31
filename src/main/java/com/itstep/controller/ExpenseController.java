@@ -36,7 +36,7 @@ public class ExpenseController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public List<ExpenseDto> getAllExpenses(@PathParam("eventId") Integer eventId) {
         return expenseService.getAllExpenses(eventId);
     }
@@ -48,7 +48,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void delete(@PathVariable Integer id) {
         expenseService.delete(id);
     }

@@ -5,7 +5,6 @@ import com.itstep.entity.Note;
 import com.itstep.mapper.MapperTestConfig;
 import com.itstep.mapper.NoteMapper;
 import com.itstep.repository.NoteRepository;
-import com.itstep.repository.UserRepository;
 import com.itstep.service.impl.NoteServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+
+import java.util.List;
 
 import static com.itstep.TestDataFactory.getNote;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,9 +29,6 @@ public class NoteServiceTests {
 
     @Mock
     NoteRepository noteRepository;
-
-    @Mock
-    UserRepository userRepository;
 
     @MockitoSpyBean
     NoteMapper noteMapper;
@@ -50,5 +48,30 @@ public class NoteServiceTests {
         assertThat(actualNote).isEqualTo(noteMapper.toDto(note));
         verify(noteMapper, times(1)).toEntity(any(), any());
         verify(noteRepository, times(1)).save(any());
+    }
+
+    @Test
+    void getAllNotesTest() {
+        Note note1 = getNote();
+        Note note2 = getNote();
+        List<Note> notes = List.of(note1, note2);
+
+        when(noteRepository.findByExpenseId(any())).thenReturn(notes);
+
+        List<NoteDto> resultList = noteService.getAllNotes(1);
+
+        assertThat(resultList).isNotNull();
+        assertThat(resultList.size()).isEqualTo(notes.size());
+
+        verify(noteRepository, times(1)).findByExpenseId(any());
+    }
+
+    @Test
+    void deleteTest() {
+        doNothing().when(noteRepository).deleteById(any());
+
+        noteService.deleteNote(1);
+
+        verify(noteRepository, times(1)).deleteById(any());
     }
 }

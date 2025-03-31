@@ -2,8 +2,8 @@ package com.itstep.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itstep.dto.NoteDto;
-import com.itstep.service.NoteService;
+import com.itstep.dto.EventDto;
+import com.itstep.service.EventService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,16 +14,14 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
-import static com.itstep.TestDataFactory.getNoteDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(NoteController.class)
-public class NoteControllerTests {
+@WebMvcTest(EventController.class)
+public class EventControllerTests {
 
     @Autowired
     MockMvc mockMvc;
@@ -32,57 +30,57 @@ public class NoteControllerTests {
     ObjectMapper objectMapper;
 
     @MockitoBean
-    NoteService noteService;
+    EventService eventService;
 
     @Test
-    public void createNoteTest() throws Exception {
-        NoteDto note = getNoteDto();
+    public void createEventTest() throws Exception {
+        EventDto event = new EventDto(1, "test");
 
-        when(noteService.addNote(any())).thenReturn(note);
+        when(eventService.create(any())).thenReturn(event);
 
-        MvcResult mvcResult = mockMvc.perform(post("/note")
+        MvcResult mvcResult = mockMvc.perform(post("/event")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(note)))
+                        .content(objectMapper.writeValueAsString(event)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         String jsonResponse = mvcResult.getResponse().getContentAsString();
-        NoteDto responseDto = objectMapper.readValue(jsonResponse, NoteDto.class);
+        EventDto responseDto = objectMapper.readValue(jsonResponse, EventDto.class);
 
         assertThat(responseDto).isNotNull();
-        assertThat(responseDto).isEqualTo(note);
+        assertThat(responseDto).isEqualTo(event);
 
-        verify(noteService, times(1)).addNote(any());
+        verify(eventService, times(1)).create(any());
     }
 
     @Test
-    public void getNotesTest() throws Exception {
-        NoteDto note1 = new NoteDto(1, 1, "user1", "some text");
-        NoteDto note2 = new NoteDto(2, 1, "user1", "some text");
-        List<NoteDto> notes = List.of(note1, note2);
+    public void getAllEventsTest() throws Exception {
+        EventDto event1 = new EventDto(1, "test 1");
+        EventDto event2 = new EventDto(2, "test 2");
+        List<EventDto> events = List.of(event1, event2);
 
-        when(noteService.getAllNotes(any())).thenReturn(notes);
+        when(eventService.getAllEvents()).thenReturn(events);
 
-        MvcResult mvcResult = mockMvc.perform(get("/note/{expenseId}", 1))
+        MvcResult mvcResult = mockMvc.perform(get("/event"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String jsonResponse = mvcResult.getResponse().getContentAsString();
-        List<NoteDto> response = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        List<EventDto> response = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
 
         assertThat(response).isNotNull();
-        assertThat(response).containsExactlyInAnyOrderElementsOf(notes);
+        assertThat(response).containsExactlyInAnyOrderElementsOf(events);
 
-        verify(noteService, times(1)).getAllNotes(any());
+        verify(eventService, times(1)).getAllEvents();
     }
 
     @Test
     public void deleteTest() throws Exception {
-        doNothing().when(noteService).deleteNote(any());
+        doNothing().when(eventService).delete(any());
 
-        mockMvc.perform(delete("/note/{id}", 1))
+        mockMvc.perform(delete("/event/{id}", 1))
                 .andExpect(status().isOk());
 
-        verify(noteService, times(1)).deleteNote(any());
+        verify(eventService, times(1)).delete(any());
     }
 }

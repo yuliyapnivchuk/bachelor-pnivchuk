@@ -29,5 +29,6 @@ public interface EventMapper {
 
     EventDto toDto(Event event);
 
+    @Mapping(target = "expenses", ignore = true)
     Event toEntity(EventDto eventDto);
 }

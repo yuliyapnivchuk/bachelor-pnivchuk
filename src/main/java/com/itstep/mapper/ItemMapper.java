@@ -18,7 +18,9 @@ public interface ItemMapper {
 
     default Item toEntity(ItemDto itemDto, @Context Expense expense, @Context UserRepository userRepository) {
         Item item = toEntityIgnoreExpense(itemDto, userRepository);
-        item.setExpense(expense);
+        if (item != null) {
+            item.setExpense(expense);
+        }
         return item;
     }
 }

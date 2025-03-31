@@ -7,14 +7,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,6 +69,33 @@ public class ImageControllerTests {
 
         mockMvc.perform(delete("/image/{expenseId}", 1))
                 .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void getImageTest() throws Exception {
+        byte[] image = "dummy image content".getBytes();
+        when(imageService.getImage(any())).thenReturn(image);
+
+        MvcResult mvcResult = mockMvc.perform(get("/image/{expenseId}", 1))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        byte[] response = mvcResult.getResponse().getContentAsByteArray();
+
+        assertThat(response).isNotNull();
+        assertThat(response).isEqualTo(image);
+
+        verify(imageService, times(1)).getImage(any());
+    }
+
+    @Test
+    public void getImageNotFoundTest() throws Exception {
+        doThrow(IOException.class).when(imageService).getImage(any());
+
+        mockMvc.perform(get("/image/{expenseId}", 1))
+                .andExpect(status().isNotFound());
+
+        verify(imageService, times(1)).getImage(any());
     }
 
     private static class CustomMockMultipartFile extends MockMultipartFile {

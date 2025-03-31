@@ -49,4 +49,18 @@ public class ItemMapperTests {
         assertThat(item).isNotNull();
         assertThat(item.getExpense()).isEqualTo(expense);
     }
+
+    @Test
+    void toEntityWhenItemIsNullTest() {
+        Expense expense = getExpense();
+
+        Item item = itemMapper.toEntity(null, expense, userRepository);
+        assertThat(item).isNull();
+    }
+
+    @Test
+    void toDtoWhenItemIsNullTest() {
+        ItemDto item = itemMapper.toDto(null);
+        assertThat(item).isNull();
+    }
 }

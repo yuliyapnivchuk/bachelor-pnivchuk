@@ -1,5 +1,6 @@
 package com.itstep.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.ItemDto;
@@ -225,7 +226,15 @@ public class ExpenseControllerTests {
                 )
                 .build();
 
-        expenseDto.setItems(List.of(item1, item2, item3, item4));
+        ItemDto item5 = ItemDto.builder()
+                .description("Вареники")
+                .price(110.0)
+                .quantity(1.0)
+                .totalPrice(110.0)
+                .splitType("=")
+                .build();
+
+        expenseDto.setItems(List.of(item1, item2, item3, item4, item5));
 
         when(expenseService.submitExpense(any())).thenReturn(expenseDto);
 
@@ -241,7 +250,8 @@ public class ExpenseControllerTests {
                         "Percentage sum is not 100% for Split Type: %;",
                         "Missing Value for Split Type: shares;",
                         "Missing User for Split Type: =;",
-                        "Missing User for Split Type: shares;"
+                        "Missing User for Split Type: shares;",
+                        "Missing Split Details for Split Type: =;"
                 )));
 
         verify(expenseService, times(0)).submitExpense(any());
@@ -339,5 +349,40 @@ public class ExpenseControllerTests {
                 )));
 
         verify(expenseService, times(0)).submitExpense(any());
+    }
+
+    @Test
+    public void getAllExpensesTest() throws Exception {
+        ExpenseDto expenseDto1 = getExpenseDto();
+        ExpenseDto expenseDto2 = getExpenseDto();
+        expenseDto2.setId(2);
+        expenseDto2.setCurrency("USD");
+        List<ExpenseDto> expenses = List.of(expenseDto1, expenseDto2);
+
+        when(expenseService.getAllExpenses(any())).thenReturn(expenses);
+
+        MvcResult mvcResult = mockMvc.perform(get("/expense")
+                        .param("eventId", "1"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonResponse = mvcResult.getResponse().getContentAsString();
+        List<ExpenseDto> response = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
+
+        assertThat(response).isNotNull();
+        assertThat(response).containsExactlyInAnyOrderElementsOf(expenses);
+
+        verify(expenseService, times(1)).getAllExpenses(any());
+    }
+
+    @Test
+    public void deleteTest() throws Exception {
+        doNothing().when(expenseService).delete(any());
+
+        mockMvc.perform(delete("/expense/{id}", 1))
+                .andExpect(status().isAccepted());
+
+        verify(expenseService, times(1)).delete(any());
     }
 }

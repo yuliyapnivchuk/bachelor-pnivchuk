@@ -40,7 +40,7 @@ public class ExpenseMapperTests {
         ExpenseDto expenseDto = getExpenseDto();
         expenseDto.setSplitDetails(List.of(SplitDetailsDto.builder().userName("user2").build()));
 
-        when(eventRepository.findById(any(Integer.class))).thenReturn(Optional.of(new Event(1, "name")));
+        when(eventRepository.findById(any(Integer.class))).thenReturn(Optional.of(new Event(1, "name", null)));
         when(userRepository.findByName("user1")).thenReturn(Optional.of(new User(1, "user1", "user1@gmail.com")));
         when(userRepository.findByName("user2")).thenReturn(Optional.of(new User(2, "user2", "user2@gmail.com")));
 
@@ -102,7 +102,7 @@ public class ExpenseMapperTests {
         expenseDto.setSplitDetails(null);
         expenseDto.getItems().forEach(item -> item.setSplitDetails(null));
 
-        when(eventRepository.findById(any(Integer.class))).thenReturn(Optional.of(new Event(1, "name")));
+        when(eventRepository.findById(any(Integer.class))).thenReturn(Optional.of(new Event(1, "name", null)));
         when(userRepository.findByName("user1")).thenReturn(Optional.of(new User(1, "user1", "user1@gmail.com")));
         when(userRepository.findByName("user2")).thenReturn(Optional.of(new User(2, "user2", "user2@gmail.com")));
 
@@ -149,7 +149,7 @@ public class ExpenseMapperTests {
         ExpenseDto expenseDto = getExpenseDto();
         expenseDto.setItems(null);
 
-        when(eventRepository.findById(any(Integer.class))).thenReturn(Optional.of(new Event(1, "name")));
+        when(eventRepository.findById(any(Integer.class))).thenReturn(Optional.of(new Event(1, "name", null)));
         when(userRepository.findByName("user1")).thenReturn(Optional.of(new User(1, "user1", "user1@gmail.com")));
         when(userRepository.findByName("user2")).thenReturn(Optional.of(new User(2, "user2", "user2@gmail.com")));
 
