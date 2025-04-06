@@ -1,5 +1,7 @@
 package com.itstep.controller;
 
+import com.itstep.dto.ExpenseDto;
+import com.itstep.dto.PromptDto;
 import com.itstep.service.SpeechRecognitionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,11 +16,11 @@ import java.util.Map;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/speech")
+@RequestMapping
 public class SpeechRecognitionController {
     private SpeechRecognitionService speechRecognitionService;
 
-    @PostMapping("/toText")
+    @PostMapping("/speech/toText")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<String, String> convertSpeechToText(@RequestParam("file") MultipartFile file) {
         File tempFile;
@@ -37,5 +39,15 @@ public class SpeechRecognitionController {
         Map<String, String> result = new HashMap<>();
         result.put("text", text);
         return result;
+    }
+
+    @PostMapping("/textToExpense")
+    @ResponseStatus(HttpStatus.OK)
+    public ExpenseDto parseExpense(@RequestBody PromptDto requestBody) {
+        try {
+            return speechRecognitionService.parseExpense(requestBody);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to convert text into Expense.", e);
+        }
     }
 }

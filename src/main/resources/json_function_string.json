@@ -1,0 +1,33 @@
+{
+  "name": "parse_expense",
+  "description": "Parses natural language expense input into structured expense JSON. Available categories: FOOD, TRANSPORTATION, ACCOMMODATION, ENTERTAINMENT, TRAVEL, SHOPPING.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "summary": {
+        "type": "string"
+      },
+      "totalAmount": {
+        "type": "number"
+      },
+      "subtotalAmount": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "currency": {
+        "type": "string"
+      },
+      "category": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "summary",
+      "totalAmount",
+      "currency",
+      "category"
+    ]
+  }
+}
