@@ -3,7 +3,10 @@ package com.itstep.controller;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.dto.PromptDto;
 import com.itstep.service.SpeechRecognitionService;
+import com.itstep.service.StructuredOutputService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,12 @@ import java.util.Map;
 @RequestMapping
 public class SpeechRecognitionController {
     private SpeechRecognitionService speechRecognitionService;
+    private StructuredOutputService structuredOutputService;
+
+    @Autowired
+    public SpeechRecognitionController(@Qualifier("OpenAI") SpeechRecognitionService speechRecognitionService) {
+        this.speechRecognitionService = speechRecognitionService;
+    }
 
     @PostMapping("/speech/toText")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -45,7 +54,7 @@ public class SpeechRecognitionController {
     @ResponseStatus(HttpStatus.OK)
     public ExpenseDto parseExpense(@RequestBody PromptDto requestBody) {
         try {
-            return speechRecognitionService.parseExpense(requestBody);
+            return structuredOutputService.parseExpense(requestBody);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to convert text into Expense.", e);
         }
