@@ -1,10 +1,8 @@
 package com.itstep.controller;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.PromptDto;
 import com.itstep.service.SpeechRecognitionService;
 import com.itstep.service.StructuredOutputService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -17,7 +15,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping
 public class SpeechRecognitionController {
@@ -25,8 +22,10 @@ public class SpeechRecognitionController {
     private StructuredOutputService structuredOutputService;
 
     @Autowired
-    public SpeechRecognitionController(@Qualifier("OpenAI") SpeechRecognitionService speechRecognitionService) {
+    public SpeechRecognitionController(@Qualifier("OpenAI") SpeechRecognitionService speechRecognitionService,
+                                       StructuredOutputService structuredOutputService) {
         this.speechRecognitionService = speechRecognitionService;
+        this.structuredOutputService = structuredOutputService;
     }
 
     @PostMapping("/speech/toText")
@@ -50,11 +49,23 @@ public class SpeechRecognitionController {
         return result;
     }
 
-    @PostMapping("/textToExpense")
+    @PostMapping("/speech/toExpense")
     @ResponseStatus(HttpStatus.OK)
-    public ExpenseDto parseExpense(@RequestBody PromptDto requestBody) {
+    public ExpenseDto parseExpense(@RequestParam("file") MultipartFile file,
+                                   @RequestParam("user") String user,
+                                   @RequestParam("event_id") Integer eventId) {
+        File tempFile;
         try {
-            return structuredOutputService.parseExpense(requestBody);
+            tempFile = File.createTempFile("uploaded-", ".wav");
+            file.transferTo(tempFile);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to transfer uploaded audio to temp file ", e);
+        }
+
+        String text = speechRecognitionService.convertSpeechToText(tempFile.getAbsolutePath());
+
+        try {
+            return structuredOutputService.parseExpense(text, user, eventId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to convert text into Expense.", e);
         }

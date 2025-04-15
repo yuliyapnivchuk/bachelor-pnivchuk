@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS item (
     expense_id INT,
     description VARCHAR(300),
     price NUMERIC,
-    quantity INT,
+    quantity NUMERIC,
     total_price NUMERIC,
     split_type VARCHAR(20),
     FOREIGN KEY (expense_id) REFERENCES expense(id) ON DELETE CASCADE

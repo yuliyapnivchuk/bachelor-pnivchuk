@@ -4,7 +4,6 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.PromptDto;
 import com.itstep.service.StructuredOutputService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class StructuredOutputServiceImpl implements StructuredOutputService {
     @Autowired
     ObjectMapper objectMapper;
 
-    public ExpenseDto parseExpense(PromptDto userPrompt) {
+    public ExpenseDto parseExpense(String text, String user, Integer eventId) {
         String key = secretClient.getSecret("OPENAI-API-KEY").getValue();
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(key);
@@ -57,7 +56,7 @@ public class StructuredOutputServiceImpl implements StructuredOutputService {
                   "functions": [%s],
                   "function_call": {"name": "parse_expense"}
                 }
-                """.formatted(model, userPrompt.getPrompt(), getJsonFunctionString());
+                """.formatted(model, text, getJsonFunctionString());
 
         HttpEntity<String> entity = new HttpEntity<>(body, headers);
 
@@ -71,9 +70,9 @@ public class StructuredOutputServiceImpl implements StructuredOutputService {
         ExpenseDto expense = handleResponse(response);
         expense.setTransactionDate(LocalDate.now());
         expense.setTransactionTime(LocalTime.now().truncatedTo(SECONDS).toString());
-        expense.setEventId(userPrompt.getEventId());
-        expense.setCreatedBy(userPrompt.getUser());
-        expense.setPayedBy(userPrompt.getUser());
+        expense.setEventId(eventId);
+        expense.setCreatedBy(user);
+        expense.setPayedBy(user);
         expense.setSubtotalAmount(expense.getTotalAmount());
         return expense;
     }
