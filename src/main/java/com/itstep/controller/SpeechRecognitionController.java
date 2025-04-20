@@ -51,7 +51,7 @@ public class SpeechRecognitionController {
 
     @PostMapping("/speech/toExpense")
     @ResponseStatus(HttpStatus.OK)
-    public ExpenseDto parseExpense(@RequestParam("file") MultipartFile file,
+    public ExpenseDto speechToExpense(@RequestParam("file") MultipartFile file,
                                    @RequestParam("user") String user,
                                    @RequestParam("event_id") Integer eventId) {
         File tempFile;

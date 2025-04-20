@@ -1,6 +1,6 @@
 {
   "name": "parse_expense",
-  "description": "Parses natural language expense input into structured expense JSON. Available categories: FOOD, TRANSPORTATION, ACCOMMODATION, ENTERTAINMENT, TRAVEL, SHOPPING.",
+  "description": "Parses natural language expense input into structured expense JSON. For currency return currency code like UAH, USD etc. Available categories: FOOD, TRANSPORTATION, ACCOMMODATION, ENTERTAINMENT, TRAVEL, SHOPPING.",
   "parameters": {
     "type": "object",
     "properties": {

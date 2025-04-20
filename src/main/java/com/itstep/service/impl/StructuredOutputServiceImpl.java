@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.service.StructuredOutputService;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Service
+@AllArgsConstructor
 public class StructuredOutputServiceImpl implements StructuredOutputService {
 
     @Value("${openai.structured.output.url}")

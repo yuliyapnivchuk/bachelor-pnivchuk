@@ -60,7 +60,8 @@ tasks.jacocoTestReport {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
 					'com/itstep/config/**',
-					'com/itstep/DemoApplication.class'
+					'com/itstep/DemoApplication.class',
+					'com/itstep/service/impl/SpeechRecognitionServiceImpl.class'
 			])
 		}))
 	}

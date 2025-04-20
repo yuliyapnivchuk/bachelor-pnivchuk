@@ -2,11 +2,13 @@ package com.itstep.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itstep.dto.ExpenseDto;
 import com.itstep.service.SpeechRecognitionService;
+import com.itstep.service.StructuredOutputService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -36,7 +38,11 @@ public class SpeechRecognitionControllerTests {
     ObjectMapper objectMapper;
 
     @MockitoBean
-    SpeechRecognitionService speechRecognitionService;
+    @Qualifier("OpenAI")
+    private SpeechRecognitionService speechRecognitionService;
+
+    @MockitoBean
+    private StructuredOutputService structuredOutputService;
 
     @Test
     public void convertSpeechToTextTest() throws Exception {
@@ -86,5 +92,76 @@ public class SpeechRecognitionControllerTests {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void speechToExpenseTest() throws Exception {
+
+        MockMultipartFile audioFile = new MockMultipartFile(
+                "file",
+                "test-audio.wav",
+                String.valueOf(MediaType.valueOf("audio/wav")),
+                "dummy audio content".getBytes()
+        );
+
+        when(speechRecognitionService.convertSpeechToText(any())).thenReturn("Some text that was recognized");
+        when(structuredOutputService.parseExpense(any(), any(), any())).thenReturn(new ExpenseDto());
+
+        MvcResult mvcResult = mockMvc.perform(multipart("/speech/toExpense")
+                        .file(audioFile)
+                        .param("user", "user1")
+                        .param("event_id", "1")
+                        .contentType(MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonResponse = mvcResult.getResponse().getContentAsString();
+        ExpenseDto result = objectMapper.readValue(jsonResponse, ExpenseDto.class);
+
+        assertThat(mvcResult).isNotNull();
+        assertThat(result).isNotNull();
+
+        verify(speechRecognitionService, times(1)).convertSpeechToText(any());
+        verify(structuredOutputService, times(1)).parseExpense(any(), any(), any());
+    }
+
+    @Test
+    public void speechToExpenseIOExceptionTest() {
+        MockMultipartFile audioFile = new MockMultipartFile(
+                "file",
+                "test-audio.wav",
+                String.valueOf(MediaType.valueOf("audio/wav")),
+                "dummy audio content".getBytes()
+        );
+
+        try (MockedStatic<File> mockedFile = mockStatic(File.class)) {
+            mockedFile.when(() -> File.createTempFile("uploaded-", ".wav")).thenThrow(new IOException());
+
+            mockMvc.perform(multipart("/speech/toExpense")
+                    .file(audioFile)
+                    .param("user", "user1")
+                    .param("event_id", "1")
+                    .contentType(MULTIPART_FORM_DATA)).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void speechToExpenseExceptionTest() throws Exception {
+        MockMultipartFile audioFile = new MockMultipartFile(
+                "file",
+                "test-audio.wav",
+                String.valueOf(MediaType.valueOf("audio/wav")),
+                "dummy audio content".getBytes()
+        );
+
+        when(structuredOutputService.parseExpense(any(), any(), any())).thenThrow(new RuntimeException());
+
+        mockMvc.perform(multipart("/speech/toExpense")
+                .file(audioFile)
+                .param("user", "user1")
+                .param("event_id", "1")
+                .contentType(MULTIPART_FORM_DATA)).andExpect(status().isBadRequest());
     }
 }
