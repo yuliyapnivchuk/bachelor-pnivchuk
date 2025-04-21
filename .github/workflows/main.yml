@@ -13,11 +13,18 @@ jobs:
       contents: read
 
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v4
-      -
-        name: Set up Docker Buildx
+
+      - name: Execute unit tests
+        run: |
+          ./gradlew test 
+
+      - name: Generate jar
+        run: |
+          ./gradlew bootJar 
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Azure login
@@ -38,10 +45,6 @@ jobs:
           registry: itstep.azurecr.io
           username: ${{ steps.myGetSecretAction.outputs.REGISTRY-USERNAME }}
           password: ${{ steps.myGetSecretAction.outputs.REGISTRY-PASSWORD }}
-
-      - name: Generate jar
-        run: |
-          ./gradlew bootJar   
           
       - name: Build and push Docker images with docker compose
         run: |
@@ -59,8 +62,8 @@ jobs:
                 --image itstep.azurecr.io/db:latest \
                 --cpu 1 --memory 1.0 \
                 --ports 5432 \
-                --registry-username ${{ secrets.REGISTRY_USERNAME }} \
-                --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
+                --registry-username ${{ steps.myGetSecretAction.outputs.REGISTRY-USERNAME }} \
+                --registry-password ${{ steps.myGetSecretAction.outputs.REGISTRY-PASSWORD }} \
                 --os-type Linux \
                 --environment-variables \
                   POSTGRES_DB=${{ vars.POSTGRES_DB }} \
@@ -80,8 +83,8 @@ jobs:
                 --image itstep.azurecr.io/app:latest \
                 --cpu 1 --memory 1.0 \
                 --ports 8080 \
-                --registry-username ${{ secrets.REGISTRY_USERNAME }} \
-                --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
+                --registry-username ${{ steps.myGetSecretAction.outputs.REGISTRY-USERNAME }} \
+                --registry-password ${{ steps.myGetSecretAction.outputs.REGISTRY-PASSWORD }} \
                 --os-type Linux \
                 --environment-variables \
                   AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }} \
