@@ -20,6 +20,18 @@ jobs:
         run: |
           ./gradlew test 
 
+      - name: Upload Jacoco report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jacoco report
+          path: build/reports/jacoco/test/html/
+
+      - name: Upload Gradle report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gradle report
+          path: build/reports/tests/test/
+
       - name: Generate jar
         run: |
           ./gradlew bootJar 
