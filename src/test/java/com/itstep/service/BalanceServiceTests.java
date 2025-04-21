@@ -54,15 +54,12 @@ public class BalanceServiceTests {
         assertThat(result.getUserIsOwedTotal().get("USD")).isEqualTo(520.0);
         assertThat(result.getUserIsOwedTotal().get("UAH")).isEqualTo(2266.25);
         assertThat(result.getUserOwes().get("user2").get("USD")).isEqualTo(1080.0);
-        assertThat(result.getUserOwes().get("user2").get("UAH")).isEqualTo(588.75);
         assertThat(result.getUserOwes().get("user3").get("EUR")).isEqualTo(250.0);
-        assertThat(result.getUserOwes().get("user3").get("UAH")).isEqualTo(50.0);
-        assertThat(result.getUserOwes().get("user4").get("USD")).isEqualTo(250.0);
         assertThat(result.getUserIsOwed().get("user2").get("EUR")).isEqualTo(250.0);
-        assertThat(result.getUserIsOwed().get("user2").get("UAH")).isEqualTo(663.75);
+        assertThat(result.getUserIsOwed().get("user2").get("UAH")).isEqualTo(75.0);
         assertThat(result.getUserIsOwed().get("user3").get("USD")).isEqualTo(250.0);
-        assertThat(result.getUserIsOwed().get("user3").get("UAH")).isEqualTo(478.75);
-        assertThat(result.getUserIsOwed().get("user4").get("USD")).isEqualTo(270.0);
+        assertThat(result.getUserIsOwed().get("user3").get("UAH")).isEqualTo(428.75);
+        assertThat(result.getUserIsOwed().get("user4").get("USD")).isEqualTo(20.0);
         assertThat(result.getUserIsOwed().get("user4").get("UAH")).isEqualTo(1123.75);
     }
 

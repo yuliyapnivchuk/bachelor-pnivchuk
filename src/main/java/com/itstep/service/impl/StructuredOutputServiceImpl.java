@@ -25,7 +25,6 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Service
-@AllArgsConstructor
 public class StructuredOutputServiceImpl implements StructuredOutputService {
 
     @Value("${openai.structured.output.url}")
