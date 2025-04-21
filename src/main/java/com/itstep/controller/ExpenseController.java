@@ -1,13 +1,14 @@
 package com.itstep.controller;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.ExpenseSubmissionDto;
 import com.itstep.service.ExpenseService;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -18,29 +19,37 @@ public class ExpenseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @SneakyThrows
     public ExpenseDto createExpense(@RequestBody ExpenseDto expenseDto) {
         return expenseService.addExpense(expenseDto);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @SneakyThrows
     public ExpenseDto updateExpense(@RequestBody ExpenseDto expenseDto) {
         return expenseService.updateExpense(expenseDto);
     }
 
     @GetMapping("{expenseId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @SneakyThrows
     public ExpenseDto getExpense(@PathVariable Integer expenseId) {
         return expenseService.getExpense(expenseId);
     }
 
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ExpenseDto> getAllExpenses(@PathParam("eventId") Integer eventId) {
+        return expenseService.getAllExpenses(eventId);
+    }
+
     @PostMapping("/submit")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @SneakyThrows
-    public ExpenseDto submitExpense(@Valid @RequestBody ExpenseSubmissionDto expenseDto) {
+    public ExpenseDto submitExpense(@Valid @RequestBody ExpenseDto expenseDto) {
         return expenseService.submitExpense(expenseDto);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void delete(@PathVariable Integer id) {
+        expenseService.delete(id);
     }
 }

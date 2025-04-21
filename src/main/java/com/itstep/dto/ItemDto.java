@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
+@EqualsAndHashCode
 public class ItemDto {
     private Integer id;
     private String description;

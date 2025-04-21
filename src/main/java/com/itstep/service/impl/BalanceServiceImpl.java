@@ -3,8 +3,7 @@ package com.itstep.service.impl;
 import com.itstep.dto.BalanceDto;
 import com.itstep.entity.Expense;
 import com.itstep.exception.ExpenseNotFound;
-import com.itstep.exception.NonExistingSplitType;
-import com.itstep.repository.ExpenseItemProjection;
+import com.itstep.entity.ExpenseItemProjection;
 import com.itstep.repository.ExpenseRepository;
 import com.itstep.service.BalanceService;
 import com.itstep.service.SplitType;
@@ -30,6 +29,8 @@ public class BalanceServiceImpl implements BalanceService {
         Map<String, Double> userOwesTotal = calculateTotal(userOweBalance);
         Map<String, Double> totalBalance = calculateTotal(userIsOwedTotal, userOwesTotal);
 
+        simplifyUserBalances(userOweBalance, userIsOwedBalance);
+
         return BalanceDto.builder()
                 .userIsOwed(userIsOwedBalance)
                 .userOwes(userOweBalance)
@@ -37,6 +38,43 @@ public class BalanceServiceImpl implements BalanceService {
                 .userOwesTotal(userOwesTotal)
                 .totalBalance(totalBalance)
                 .build();
+    }
+
+    private void simplifyUserBalances(Map<String, Map<String, Double>> userOweBalance,
+                                           Map<String, Map<String, Double>> userIsOwedBalance) {
+        for (String userKey : userOweBalance.keySet()) {
+            if (!userIsOwedBalance.containsKey(userKey)) {
+                continue;
+            }
+
+            Map<String, Double> oweMap = userOweBalance.get(userKey);
+            Map<String, Double> owedMap = userIsOwedBalance.get(userKey);
+
+            Iterator<Map.Entry<String, Double>> oweIterator = oweMap.entrySet().iterator();
+
+            while (oweIterator.hasNext()) {
+                Map.Entry<String, Double> oweEntry = oweIterator.next();
+                String currency = oweEntry.getKey();
+                double oweAmount = oweEntry.getValue();
+
+                if (!owedMap.containsKey(currency)) {
+                    continue;
+                }
+
+                double owedAmount = owedMap.get(currency);
+
+                if (oweAmount > owedAmount) {
+                    oweEntry.setValue(oweAmount - owedAmount);
+                    owedMap.remove(currency);
+                } else if (oweAmount < owedAmount) {
+                    owedMap.put(currency, owedAmount - oweAmount);
+                    oweIterator.remove();
+                } else {
+                    oweIterator.remove();
+                    owedMap.remove(currency);
+                }
+            }
+        }
     }
 
     private Map<String, Map<String, Double>> calculateWhatUserIsOwed(String user) {
@@ -57,7 +95,6 @@ public class BalanceServiceImpl implements BalanceService {
                 case SHARES -> userIsOwedBalanceSplitByShares(itemShareComponents, userIsOwedBalance);
                 case PERCENTAGE -> userIsOwedBalanceSplitByPercentage(itemShareComponents, userIsOwedBalance);
                 case MANUAL -> userIsOwedBalanceSplitByExactAmounts(itemShareComponents, userIsOwedBalance);
-                default -> throw new NonExistingSplitType("Non existing split type");
             }
         }
 
@@ -89,11 +126,11 @@ public class BalanceServiceImpl implements BalanceService {
             }
 
             switch (SplitType.get(expenseItems.getValue())) {
-                case EQUAL -> userOwesBalanceSplitEqually(itemShareComponents.size(), userOweItem.get(), userOweBalances);
+                case EQUAL ->
+                        userOwesBalanceSplitEqually(itemShareComponents.size(), userOweItem.get(), userOweBalances);
                 case SHARES -> userOwesBalanceSplitByShares(itemShareComponents, userOweItem.get(), userOweBalances);
                 case PERCENTAGE -> userOwesBalanceSplitByPercentage(userOweItem.get(), userOweBalances);
                 case MANUAL -> userOwesBalanceSplitByExactAmounts(userOweItem.get(), userOweBalances);
-                default -> throw new NonExistingSplitType("Non existing split type");
             }
         }
 

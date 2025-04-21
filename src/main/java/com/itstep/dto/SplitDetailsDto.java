@@ -7,6 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
+@EqualsAndHashCode
 public class SplitDetailsDto {
     private Integer id;
     private String userName;

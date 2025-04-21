@@ -19,7 +19,7 @@ import static com.microsoft.cognitiveservices.speech.ResultReason.Canceled;
 import static com.microsoft.cognitiveservices.speech.ResultReason.RecognizedSpeech;
 import static com.microsoft.cognitiveservices.speech.CancellationReason.Error;
 
-@Service
+@Service("Azure")
 public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
 
     @Autowired

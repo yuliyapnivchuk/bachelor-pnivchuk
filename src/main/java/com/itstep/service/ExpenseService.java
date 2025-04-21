@@ -1,11 +1,14 @@
 package com.itstep.service;
 
 import com.itstep.dto.ExpenseDto;
-import com.itstep.dto.ExpenseSubmissionDto;
+
+import java.util.List;
 
 public interface ExpenseService {
     ExpenseDto addExpense(ExpenseDto expenseDto);
     ExpenseDto getExpense(Integer expenseId);
     ExpenseDto updateExpense(ExpenseDto expenseDto);
-    ExpenseDto submitExpense(ExpenseSubmissionDto expenseSubmissionDto);
+    ExpenseDto submitExpense(ExpenseDto expenseDto);
+    List<ExpenseDto> getAllExpenses(Integer eventId);
+    void delete(Integer id);
 }

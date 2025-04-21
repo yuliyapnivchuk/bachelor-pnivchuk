@@ -3,9 +3,10 @@ package com.itstep.controller;
 import com.itstep.dto.NoteDto;
 import com.itstep.service.NoteService;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -16,8 +17,19 @@ public class NoteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @SneakyThrows
     public NoteDto createNote(@RequestBody NoteDto noteDto) {
         return noteService.addNote(noteDto);
+    }
+
+    @GetMapping("{expenseId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<NoteDto> getNotes(@PathVariable Integer expenseId) {
+        return noteService.getAllNotes(expenseId);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteNote(@PathVariable Integer id) {
+        noteService.deleteNote(id);
     }
 }

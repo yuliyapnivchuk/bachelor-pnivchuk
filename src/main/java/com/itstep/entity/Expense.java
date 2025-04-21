@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "expense")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -21,15 +20,15 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payer", referencedColumnName = "name")
     private User payer;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "name")
     private User createdBy;
 
@@ -68,6 +67,26 @@ public class Expense {
 
     @Column(name = "image")
     private String image;
+
+    @Builder
+    public Expense(Integer id, Event event, User payer, User createdBy, String summary, Double totalAmount, Double subtotalAmount, String currency, String splitType, List<SplitDetails> splitDetails, LocalDate transactionDate, LocalTime transactionTime, String category, String status, List<Item> items, String image) {
+        this.id = id;
+        this.event = event;
+        this.payer = payer;
+        this.createdBy = createdBy;
+        this.summary = summary;
+        this.totalAmount = totalAmount;
+        this.subtotalAmount = subtotalAmount;
+        this.currency = currency;
+        this.splitType = splitType;
+        setSplitDetails(splitDetails);
+        this.transactionDate = transactionDate;
+        this.transactionTime = transactionTime;
+        this.category = category;
+        this.status = status;
+        setItems(items);
+        this.image = image;
+    }
 
     public void setSplitDetails(List<SplitDetails> splitDetails) {
         if (splitDetails == null) {

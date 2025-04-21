@@ -1,6 +1,7 @@
 package com.itstep.repository;
 
 import com.itstep.entity.Expense;
+import com.itstep.entity.ExpenseItemProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,6 +30,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 expense e ON e.id = i.expense_id
             WHERE
                 e.payer = :payer
+            AND
+                e.status = 'SUBMITTED'
             UNION
             SELECT
                 e.id,
@@ -44,6 +47,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 split_details s on s.expense_id = e.id
             WHERE
                 e.payer = :payer
+            AND
+                e.status = 'SUBMITTED'
              """, nativeQuery = true)
     List<ExpenseItemProjection> findUserIsOwedItems(@Param("payer") String payer);
 
@@ -65,6 +70,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 expense e ON e.id = i.expense_id
             WHERE
                 e.payer != :payer
+            AND
+                e.status = 'SUBMITTED'
             UNION
             SELECT
                 e.id,
@@ -81,6 +88,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
                 split_details s on s.expense_id = e.id
             WHERE
                 e.payer != :payer
+            AND
+                e.status = 'SUBMITTED'
             """, nativeQuery = true)
     List<ExpenseItemProjection> findUserOweItems(@Param("payer") String payer);
 
@@ -88,4 +97,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
     @Transactional
     @Query(value = "UPDATE expense SET image = :image WHERE id = :id", nativeQuery = true)
     void updateImageName(@Param("image") String name, @Param("id") Integer id);
+
+    List<Expense> findByEventId(Integer eventId);
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 @Setter
 @ToString
 @Builder
+@EqualsAndHashCode
 public class BalanceDto {
     private Map<String, Double> totalBalance;
     private Map<String, Double> userOwesTotal;
