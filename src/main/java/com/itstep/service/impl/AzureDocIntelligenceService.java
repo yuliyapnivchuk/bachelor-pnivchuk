@@ -107,7 +107,8 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
                         itemDto.setDescription(value);
                     }
                     case "Price" -> {
-                        Double price = (CURRENCY == documentField.getType()) ? documentField.getValueCurrency().getAmount() : null;
+                        Double price = (CURRENCY == documentField.getType() && documentField.getValueCurrency() != null)
+                                ? documentField.getValueCurrency().getAmount() : null;
                         itemDto.setPrice(price);
                     }
                     case "Quantity" -> {
@@ -115,7 +116,8 @@ public class AzureDocIntelligenceService implements ScanReceiptService {
                         itemDto.setQuantity(quantity);
                     }
                     case "TotalPrice" -> {
-                        Double totalPrice = (CURRENCY == documentField.getType()) ? documentField.getValueCurrency().getAmount() : null;
+                        Double totalPrice = (CURRENCY == documentField.getType() && documentField.getValueCurrency() != null)
+                                ? documentField.getValueCurrency().getAmount() : null;
                         itemDto.setTotalPrice(totalPrice);
                     }
                 }
