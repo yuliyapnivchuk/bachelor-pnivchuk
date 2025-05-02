@@ -3,8 +3,7 @@ package com.itstep.controller;
 import com.itstep.dto.ExpenseDto;
 import com.itstep.service.SpeechRecognitionService;
 import com.itstep.service.StructuredOutputService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,16 +16,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping
+@AllArgsConstructor
 public class SpeechRecognitionController {
     private SpeechRecognitionService speechRecognitionService;
     private StructuredOutputService structuredOutputService;
-
-    @Autowired
-    public SpeechRecognitionController(@Qualifier("OpenAI") SpeechRecognitionService speechRecognitionService,
-                                       StructuredOutputService structuredOutputService) {
-        this.speechRecognitionService = speechRecognitionService;
-        this.structuredOutputService = structuredOutputService;
-    }
 
     @PostMapping("/speech/toText")
     @ResponseStatus(HttpStatus.ACCEPTED)
