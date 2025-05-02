@@ -4,7 +4,7 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstep.mapper.MapperTestConfig;
-import com.itstep.service.impl.SpeechRecognitionServiceOpenAIImpl;
+import com.itstep.service.impl.SpeechRecognitionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ public class SpeechRecognitionServiceTests {
     private ObjectMapper objectMapper;
 
     @InjectMocks
-    private SpeechRecognitionServiceOpenAIImpl speechRecognitionService;
+    private SpeechRecognitionServiceImpl speechRecognitionService;
 
     @Test
     void convertSpeechToTextTest() {
