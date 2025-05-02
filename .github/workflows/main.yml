@@ -72,7 +72,7 @@ jobs:
                 --name db \
                 --resource-group my-resource \
                 --image itstep.azurecr.io/db:latest \
-                --cpu 1 --memory 1.0 \
+                --cpu 2 --memory 4 \
                 --ports 5432 \
                 --registry-username ${{ steps.myGetSecretAction.outputs.REGISTRY-USERNAME }} \
                 --registry-password ${{ steps.myGetSecretAction.outputs.REGISTRY-PASSWORD }} \
@@ -93,7 +93,7 @@ jobs:
                 --name app \
                 --resource-group my-resource \
                 --image itstep.azurecr.io/app:latest \
-                --cpu 1 --memory 1.0 \
+                --cpu 2 --memory 4 \
                 --ports 8080 \
                 --registry-username ${{ steps.myGetSecretAction.outputs.REGISTRY-USERNAME }} \
                 --registry-password ${{ steps.myGetSecretAction.outputs.REGISTRY-PASSWORD }} \
