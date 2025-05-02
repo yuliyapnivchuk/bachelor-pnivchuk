@@ -1,61 +1,62 @@
 package com.itstep.service.impl;
 
-import com.itstep.exception.SpeechCouldNotBeRecognized;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstep.service.SpeechRecognitionService;
-import com.microsoft.cognitiveservices.speech.*;
-import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Future;
+import java.io.File;
 
-import static com.itstep.exception.ConstantsUtility.SPEECH_COULD_NOT_BE_RECOGNIZED;
-import static com.microsoft.cognitiveservices.speech.AutoDetectSourceLanguageConfig.fromLanguages;
-import static com.microsoft.cognitiveservices.speech.ResultReason.Canceled;
-import static com.microsoft.cognitiveservices.speech.ResultReason.RecognizedSpeech;
-import static com.microsoft.cognitiveservices.speech.CancellationReason.Error;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 
-@Service("Azure")
+@Service
 public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
 
-    @Autowired
-    private SpeechConfig speechConfig;
+    @Value("${openai.speech.to.text.url}")
+    private String url;
 
-    @Value("${azure.speech.supported.languages}")
-    private String languages;
+    @Value("${openai.speech.to.text.model}")
+    private String model;
+    @Autowired
+    private SecretClient secretClient;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @SneakyThrows
+    @Override
     public String convertSpeechToText(String audioFilePath) {
+        String key = secretClient.getSecret("OPENAI-API-KEY").getValue();
 
-        AutoDetectSourceLanguageConfig autoDetectSourceLanguageConfig = fromLanguages(getSupportedLanguages());
+        File file = new File(audioFilePath);
+        FileSystemResource fileResource = new FileSystemResource(file);
 
-        AudioConfig audioConfig = AudioConfig.fromWavFileInput(audioFilePath);
-        SpeechRecognizer speechRecognizer = new SpeechRecognizer(speechConfig, autoDetectSourceLanguageConfig, audioConfig);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", fileResource);
+        body.add("model", model);
 
-        Future<SpeechRecognitionResult> task = speechRecognizer.recognizeOnceAsync();
-        SpeechRecognitionResult speechRecognitionResult = task.get();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(key);
+        headers.setContentType(MULTIPART_FORM_DATA);
 
-        if (speechRecognitionResult.getReason() == RecognizedSpeech) {
-            return speechRecognitionResult.getText();
-        } else if (speechRecognitionResult.getReason() == Canceled) {
-            CancellationDetails cancellation = CancellationDetails.fromResult(speechRecognitionResult);
-            String errorMsg = SPEECH_COULD_NOT_BE_RECOGNIZED + cancellation.getReason();
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
-            if (cancellation.getReason() == Error) {
-                errorMsg = errorMsg + cancellation.getErrorCode() + cancellation.getErrorDetails();
-            }
-
-            throw new SpeechCouldNotBeRecognized(errorMsg);
-        } else {
-            throw new SpeechCouldNotBeRecognized(SPEECH_COULD_NOT_BE_RECOGNIZED);
-        }
-    }
-
-    private List<String> getSupportedLanguages() {
-        return Arrays.asList(languages.split(","));
+        JsonNode rootNode = objectMapper.readTree(response.getBody());
+        return rootNode.path("text").asText();
     }
 }
