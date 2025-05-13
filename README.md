@@ -1,227 +1,35 @@
 # Getting Started
 
-### Start application
+### ТЕМА:
+#### РОЗРОБЛЕННЯ СЕРВЕРНОЇ ЧАСТИНИ З ВБУДОВАНИМ МОДУЛЕМ РОЗПІЗНАВАННЯ ТЕКСТУ НА ЗОБРАЖЕННЯХ У МОБІЛЬНОМУ ЗАСТОСУНКУ ДЛЯ УПРАВЛІННЯ ГРУПОВИМИ ВИТРАТАМИ
 
-1. Execute `docker build -t itstep .` to build a docker image.
-2. Execute `docker run --name itstep --rm -p 0.0.0.0:5432:5432 itstep` to start container with postgres database.
-3. Execute `./gradlew bootRun` to start spring application.
+#### Автор: 
+Пнівчук Юлія
+#### Науковий керівник: 
+Гриник Ростислав Олегович, науковий співробітник сектору науково-інноваційної діяльності науково-дослідного центру ЛДУБЖД
 
-## WEB REQUESTS
-### EXPENSE
-#### 1. Analyze receipt
+### Опис проекту
+Кваліфікаційна бакалаврська робота присвячена розробці серверної частини мобільного застосунку призначеного для управління груповими витратами. В ході дослідження наявних рішень було виявлено певні обмеження, а саме значна залежність від ручного введення даних та відсутність підтримки української мови. Для подолання цих обмежень було запропоновано розробку серверної частини з інтегрованими модулями розпізнавання інформації з зображень чеків та автоматичного заповнення витрат на основі голосового вводу, при цьому обидва модулі підтримують українську мову.
 
+Для реалізації проекту було використано Spring Boot фреймворк, PostgreSQL, Docker, Terraform, хмарні технології Azure, а також сервіси машинного навчання Azure AI Document Intelligence та моделі Whisper і gpt-4o-mini. В роботі представлено архітектура рішення, детальний опис розроблених модулів та процес автоматизації розгортання застосунку.
+
+Основним результатом роботи є розроблена серверна частина мобільного застосунку, яка завдяки впровадженню модулів розпізнавання чеків та голосового введення значно скорочує час введення даних і підвищує зручність користування системою.
+
+
+
+### Інструкція розгортання застосунку
+
+1. Першим етапом є розгортання хмарної інфраструктури за допомогою terraform. Для цього спочатку здійснюємо [автентифікацію](https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure-with-microsoft-account). Потім створюємо [terraform backend](https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=terraform). Він реалізований в репозиторії [terraform-azure-backend](https://github.com/yuliyapnivchuk/terraform-azure-backend). Для сворення бекенду виконуємо команди: `terraform init`, `terraform plan`, `terraform apply --auto-approve`. Далі переходимо до розгортання власне необхідної хмарної інфраструктури. Вона описана в репозиторії [terrafrom-infrastructure](https://github.com/yuliyapnivchuk/terrafrom-infrastructure). Для розгортання виконуємо команди: `terraform init`, `terraform plan`, `terraform apply --auto-approve`. 
+2. Для автоматизації деплою було налаштовано пайплайн в github actions - [Deploy to Azure Container Registry](https://github.com/yuliyapnivchuk/bachelor-pnivchuk/actions/workflows/main.yml). Тому просто запускаємо пайплайн. 
+3. Застосунок готовий обробляти запити. Host - `application.eastus.azurecontainer.io`, port: `8080`. 
+
+Тестовий запит:
 ```sh
-curl -v -X POST http://127.0.0.1:8080/receipt/scan -F "file=@./src/test/resources/templates/test3.jpg"
+curl -X POST http://application.eastus.azurecontainer.io:8080/event \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Подорож на Лофотенські острови"}'
 ```
 
-#### 2. Create expense
-
-```sh
-curl -X POST http://127.0.0.1:8080/expense \
-     -H "Content-Type: application/json" \
-     -d '{
-  "id": null,
-  "eventId": 1,
-  "payedBy": "user3",
-  "summary": "Обід в ресторані",
-  "items": [
-    {
-      "id": null,
-      "description": "Американо з молоком",
-      "price": 65,
-      "quantity": 3,
-      "totalPrice": 195,
-      "splitType": "=",
-      "splitDetails": [
-        {
-          "userName": "user2",
-          "value": null
-        }
-      ]
-    },
-    {
-      "id": null,
-      "description": "Капучино",
-      "price": 85,
-      "quantity": 2,
-      "totalPrice": 170,
-      "splitType": "shares",
-      "splitDetails": [
-        {
-          "userName": "user2",
-          "value": "1"
-        },
-        {
-          "userName": "user1",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": null,
-      "description": "Реберця",
-      "price": 210,
-      "quantity": 1,
-      "totalPrice": 210,
-      "splitType": "%",
-      "splitDetails": [
-        {
-          "userName": "user3",
-          "value": "20"
-        },
-        {
-          "user": "user1",
-          "value": "80"
-        }
-      ]
-    },
-    {
-      "id": null,
-      "description": "Сік апельсиновий",
-      "price": 50,
-      "quantity": 0.2,
-      "totalPrice": 50,
-      "splitType": "manual",
-      "splitDetails": [
-        {
-          "userName": "user1",
-          "value": 20
-        },
-        {
-          "userName": "user2",
-          "value": 30
-        }
-      ]
-    }
-  ],
-  "totalAmount": 700,
-  "subtotalAmount": 625,
-  "currency": "UAH",
-  "splitType": "byItem",
-  "splitDetails": null,
-  "transactionDate": null,
-  "transactionTime": "15:03:00",
-  "category": null,
-  "status": null,
-  "createdBy": null
-}'
-```
-
-#### 3. Update expense
-
-```sh
-curl -X PUT http://127.0.0.1:8080/ \
-     -H "Content-Type: application/json" \
-     -d '{
-  "id": 1,
-  "eventId": 1,
-  "payedBy": "user3",
-  "summary": "Обід в ресторані 1",
-  "items": [
-    {
-      "id": 34,
-      "description": "Американо з молоком",
-      "price": 65,
-      "quantity": 3,
-      "totalPrice": 195,
-      "splitType": "=",
-      "splitDetails": [
-        {
-          "id": 57,
-          "userName": "user1",
-          "value": null
-        },
-        {
-          "userName": "user3",
-          "value": null
-        }
-      ]
-    },
-    {
-      "id": 35,
-      "description": "Капучино",
-      "price": 85,
-      "quantity": 2,
-      "totalPrice": 170,
-      "splitType": "shares",
-      "splitDetails": [
-        {
-          "id": 58,
-          "userName": "user2",
-          "value": 2
-        },
-        {
-          "id": 59,
-          "userName": "user1",
-          "value": 1
-        }
-      ]
-    },
-    {
-      "id": 37,
-      "description": "Сік апельсиновий",
-      "price": 50,
-      "quantity": 1,
-      "totalPrice": 50,
-      "splitType": "manual",
-      "splitDetails": [
-        {
-          "userName": "user3",
-          "value": 30
-        },
-        {
-          "id": 63,
-          "userName": "user2",
-          "value": 20
-        }
-      ]
-    }
-  ],
-  "totalAmount": 705,
-  "subtotalAmount": 625,
-  "currency": "UAH",
-  "splitType": "byItem",
-  "splitDetails": [],
-  "transactionDate": null,
-  "transactionTime": "15:03:00",
-  "category": null,
-  "status": "DRAFT",
-  "createdBy": null
-}'
-```
-
-#### 4. Get expense
-
-```sh
-http://127.0.0.1:8080/expense?expenseId=1
-```
-
-#### 5. Submit expense
-
-```sh
-curl -X POST http://127.0.0.1:8080/expense/submit \
-     -H "Content-Type: application/json" \
-     -d '{
-  "id": 21,
-  "eventId": 1,
-  "payedBy": "user1",
-  "summary": "квитки в кіно",
-  "items": null,
-  "totalAmount": 1000,
-  "subtotalAmount": 950,
-  "currency": "UAH",
-  "splitType": "byItem",
-  "splitDetails": null,
-  "transactionDate": null,
-  "transactionTime": "15:03:00",
-  "category": null,
-  "status": "DRAFT",
-  "createdBy": null
-}'
-```
-
-#### 3. Get balance
-
-```sh
-curl -X GET "http://127.0.0.1:8080/balance?user=user1"
-```
+#### Інтерактивний інтерфейс Swagger: 
+Дозволяє досліджувати та тестувати API безпосередньо з браузера. 
+`http://application.eastus.azurecontainer.io:8080/swagger-ui/index.html`
