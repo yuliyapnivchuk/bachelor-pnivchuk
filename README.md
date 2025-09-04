@@ -32,6 +32,15 @@ curl -X POST http://application.eastus.azurecontainer.io:8080/event \
 Allows exploring and testing the API directly from the browser:
 `http://application.eastus.azurecontainer.io:8080/swagger-ui/index.html`
 
+### System architecture
+<img src="ARCHITECTURE.png" alt="SYSTEM ARCHITECTURE" width="50%" height="50%"/>
+
+### Receipt information recognition module
+<img src="RECEIPT_INFORMATION_RECOGNITION_MODULE.png" alt="RECEIPT INFORMATION RECOGNITION MODULE" width="50%" height="50%"/>
+
+### Voice input–based automatic expense entry module
+<img src="VOICE_INPUT_BASED_AUTOMATIC_EXPENSE_ENTRY_MODULE.png" alt="VOICE INPUT–BASED AUTOMATIC EXPENSE ENTRY MODULE" width="50%" height="50%"/>
+
 
 ### ТЕМА:
 #### РОЗРОБЛЕННЯ СЕРВЕРНОЇ ЧАСТИНИ З ВБУДОВАНИМ МОДУЛЕМ РОЗПІЗНАВАННЯ ТЕКСТУ НА ЗОБРАЖЕННЯХ У МОБІЛЬНОМУ ЗАСТОСУНКУ ДЛЯ УПРАВЛІННЯ ГРУПОВИМИ ВИТРАТАМИ
